@@ -110,11 +110,13 @@ public class NewPostsServlet extends HttpServlet {
             System.out.println(action);
             ArrayList<Posts> postList = new ArrayList<Posts>();
             postList = PostDB.getPosts(action);
-            //request.setAttribute("postList", postList);
+            ArrayList<Posts> value = postList;
+//request.setAttribute("postList", postList);
             request.setAttribute("postList", postList);
-            if(postList.isEmpty()){
-                
+            
+            if(value == null){                
             request.setAttribute("PostError", "Sorry No Posts For this Group");
+            request.setAttribute("groupName", action);
             RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
             rd.forward(request, response);
             }else{
