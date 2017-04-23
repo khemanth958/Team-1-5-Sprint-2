@@ -56,9 +56,10 @@
             System.out.println("email Id is "+email_id);
             String p = session.getAttribute("role").toString();
             int post_id = 0;
-            String query1="select p.post as post_text, p.post_id as post_id, u.u_name as uname from posts p, users u, post_user_group_relationship pug, groups g where p.post_id = pug.p_id and pug.u_id = u.u_id and pug.g_id = g.g_id and g.g_name = 'UNCC_49ers'";
+            String query1="select p.post as post_text, p.post_id as post_id,u.u_id as u_id, u.u_name as uname from posts p, users u, post_user_group_relationship pug, groups g where p.post_id = pug.p_id and pug.u_id = u.u_id and pug.g_id = g.g_id and g.g_name = 'UNCC_49ers'";
             Statement stmtForPost=conn.createStatement();
             Statement stmtForLikes=conn.createStatement();
+            Statement stmtForDelete = conn.createStatement();
             ResultSet rs=stmtForPost.executeQuery(query1);
             System.out.println(p);
             int i = 0;
@@ -89,8 +90,10 @@
                         i++;
                         post_id = rs.getInt("post_id");
                         System.out.println("post id is " + post_id);
+                        String queryForDelete = "Select u_id from users where u_emailid = '"+email_id+"'";
                         String query2 = "SELECT l.like_id as like_id from likes l, users u where u.u_id = l.u_id and u.u_emailid = '"+email_id+"' and l.post_id = "+post_id+"";
                         ResultSet rs1=stmtForLikes.executeQuery(query2);
+                        ResultSet rs2 = stmtForDelete.executeQuery(queryForDelete);
                         if (rs1.next())
                         {
                         System.out.println("like_id is " + rs1.getString("like_id"));
@@ -99,6 +102,17 @@
                             <td><%=rs.getString("uname") %></td>
                             <td><%=rs.getString("post_text") %></td>
                             <td><input type="button" id="like_<%=i%>" value="Liked" ></td>
+                            <%
+                                while(rs2.next())
+                                {
+                                    if (rs2.getInt("u_id") == rs.getInt("u_id")) 
+                                    {
+                                    %>
+                                        <td><input type="button" id="delete_<%=i%>" value="Delete" onclick="Delete_User_Post('<%=rs.getInt("post_id") %>','delete_<%=i%>')"/></td>
+                                    <%
+                                    }
+                                }
+                            %>
                             </tr>
                         <%
                         }
@@ -109,6 +123,17 @@
                             <td><%=rs.getString("uname") %></td>
                             <td><%=rs.getString("post_text") %></td>
                             <td><input type="button" id="like_<%=i%>" value="Like" onclick="Insert_or_Delete('<%=rs.getInt("post_id") %>','<%=p %>','<%=email_id %>','like_<%=i%>')"/></td>
+                            <%
+                                while(rs2.next())
+                                {
+                                    if (rs2.getInt("u_id") == rs.getInt("u_id")) 
+                                    {
+                                    %>
+                                        <td><input type="button" id="delete_<%=i%>" value="Delete" onclick="Delete_User_Post('<%=rs.getInt("post_id") %>','delete_<%=i%>')"/></td>
+                                    <%
+                                    }
+                                }
+                            %>
                             </tr>
                         <%
                         }
@@ -160,6 +185,25 @@
             //xmlhttp.send(param1);
             //xmlhttp.send(params2);
         }
+    }
+    
+    function Delete_User_Post(post_id,button_id)
+    {
+        var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function()
+            {
+                if(xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                {
+                    if((xmlhttp.responseText) == "Deleted")
+                        document.getElementById(button_id).value = "Deleted";
+                }
+            };
+            
+            var params= "post_id="+post_id;
+            //var params= "g_id="+group_id;
+            xmlhttp.open("Post","/SSDI_Project/DeletePost",true);
+            xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xmlhttp.send(params);
     }
     
     function ShowText()

@@ -24,12 +24,12 @@ public class UserDB {
                 PreparedStatement ps = null;
 	        ResultSet rs = null;
 	        try {
-	            ps = connection.prepareStatement("SELECT * from Users WHERE u_email = ?");
+	            ps = connection.prepareStatement("SELECT * from Users WHERE u_emailid = ?");
 	            ps.setString(1, email);
 	            rs = ps.executeQuery();
 	            while (rs.next()) {
 	            	Users user = new Users();
-	            	user.setUserEmail(rs.getString("u_email"));
+	            	user.setUserEmail(rs.getString("u_emailid"));
 	            	user.setPassword(rs.getString("u_password"));
                         user.setUserName(rs.getString("u_name"));
 	            	user.setUserID(rs.getInt("u_id"));
