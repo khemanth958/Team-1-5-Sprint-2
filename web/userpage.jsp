@@ -47,7 +47,7 @@
                 <table>
                     <tr>
                         <td><input type="button" value="<%=rs.getString("g_name")%>" id="<%=rs.getString("g_name")%>" onclick="getToGroup('<%=rs.getString("g_name")%>')"></td>
-                        <td><input type="button" value="Delete" id="<%=rs.getString("g_id")%>" onclick="Delete_row('<%=rs.getString("g_id")%>')"></td>
+                        
                     </tr>
                  <%}
         }

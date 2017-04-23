@@ -10,26 +10,31 @@ package Model;
  * @author Akshay
  */
 public class Posts {
-    private String postId;
+    private int postId;
     private String userPosts;
 
-    public Posts(String postId,String userPosts){
+    public Posts(int postId,String userPosts){
         this.postId = postId;
         this.userPosts = userPosts;
+    }
+
+    public Posts() {
+    super();
+//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     
     /**
      * @return the postID
      */
-    public String getPostId() {
+    public int getPostId() {
         return postId;
     }
 
     /**
      * @param postID the postID to set
      */
-    public void setPostId(String postId) {
+    public void setPostId(int postId) {
         this.postId = postId;
     }
 

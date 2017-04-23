@@ -40,7 +40,26 @@
     </form>
 </section>
         
+  <a href="NewPostsServlet?action=${groupName}">Show Posts</a>      
+     <h2>${PostError}</h2>
+  
+   <table>
+         <th>Post_ID</th>
+        <th>Post</th>
         
+  <c:forEach var="postsList" items="${requestScope.postList}">
+       
+        <tr> 
+            <td>${postsList.postId}</td>
+            <td> <a href="GroupServlet?action=${postsList.userPosts}">${postsList.userPosts}</a></td>
+            
+        </tr>  
+    </c:forEach>
+    
+    
+    
+    
+    </table>       
         
 <%-- Include tag is used to import footer page --%>
 <%@ include file="footer.jsp" %>

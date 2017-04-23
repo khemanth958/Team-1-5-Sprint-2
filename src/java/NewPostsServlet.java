@@ -4,6 +4,10 @@
  * and open the template in the editor.
  */
 
+import Data.PostDB;
+import Data.UserDB;
+import Model.Posts;
+import Model.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
@@ -11,6 +15,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -95,7 +102,67 @@ public class NewPostsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+            String action = request.getParameter("action");
+        try {
+            HttpSession session = request.getSession();
+            //String groupName = request.getParameter("groupName");
+            //System.out.println(groupName);
+            System.out.println(action);
+            ArrayList<Posts> postList = new ArrayList<Posts>();
+            postList = PostDB.getPosts(action);
+            //request.setAttribute("postList", postList);
+            request.setAttribute("postList", postList);
+            if(postList.isEmpty()){
+                
+            request.setAttribute("PostError", "Sorry No Posts For this Group");
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+            rd.forward(request, response);
+            }else{
+            for(int i =0;i<postList.size();i++){
+                   
+                    System.out.println(postList.get(i).getPostId());
+                }
+            request.setAttribute("groupName", action);
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+            rd.forward(request, response);
+            
+            }
+            
+            
+//RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
+//rd.forward(request, response);
+/*
+Users user1 = new Users();
+//String userType = user.getUserType();
+
+session.setAttribute("theUser", user);
+//int participants = StudyDB.getParticipants(user.getEmail());
+user1 = UserDB.getUser(user);
+session.setAttribute("user", user1);
+System.out.println(user1.getUserEmail());
+RequestDispatcher rd = request.getRequestDispatcher("userpage.jsp");
+rd.forward(request, response);
+
+} else if (role.equalsIgnoreCase("Admin")) {
+session.setAttribute("theAdmin", user);
+RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
+rd.forward(request, response);
+}
+
+*/
+
+//processRequest(request, response);
+        } catch (ClassNotFoundException ex) {
+            request.setAttribute("PostError", "Sorry No Posts For this Group");
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+            rd.forward(request, response);
+            Logger.getLogger(NewPostsServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            request.setAttribute("PostError", "Sorry No Posts For this Group");
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+            rd.forward(request, response);
+            Logger.getLogger(NewPostsServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -109,6 +176,10 @@ public class NewPostsServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        
+        
+        
         processRequest(request, response);
     }
 
