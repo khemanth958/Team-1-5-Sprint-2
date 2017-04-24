@@ -108,26 +108,26 @@ public class NewPostsServlet extends HttpServlet {
             //String groupName = request.getParameter("groupName");
             //System.out.println(groupName);
             String userEmail = (String) session.getAttribute("email");
-            
-            System.out.println(userEmail);
+            System.out.println(action);
             ArrayList<Posts> postList = new ArrayList<Posts>();
-            postList = PostDB.getPosts(action,userEmail);
+            postList = PostDB.getPosts(action);
             ArrayList<Posts> value = postList;
-//request.setAttribute("postList", postList);
-            request.setAttribute("postList", postList);
+            //request.setAttribute("postList", postList);
             
+            session.setAttribute("postList", postList);
             if(value == null){                
             request.setAttribute("PostError", "Sorry No Posts For this Group");
             request.setAttribute("groupName", action);
-            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayUserPost.jsp");
             rd.forward(request, response);
             }else{
             for(int i =0;i<postList.size();i++){
                    
                     System.out.println(postList.get(i).getPostId());
                 }
+            
             request.setAttribute("groupName", action);
-            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayUserPost.jsp");
             rd.forward(request, response);
             
             }

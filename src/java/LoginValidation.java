@@ -55,8 +55,7 @@ public class LoginValidation extends HttpServlet {
         }else
         {
             System.out.println("Connection Established");
-            PreparedStatement pst = conn.prepareStatement("select r.role as role, u.u_email as email, u.u_password as password from users u, roles r, role_user_relationship rup\n" +
-"where r.role_id = rup.role_id and rup.u_uid = u.u_id and u.u_email = ? and u.u_password = ?");
+            PreparedStatement pst = conn.prepareStatement("select r.role as role, u.u_email as email, u.u_password as password from users u, roles r, role_user_relationship rup where r.role_id = rup.role_id and rup.u_uid = u.u_id and u.u_email = ? and u.u_password = ?");
             pst.setString(1, user);
             pst.setString(2, pass);
             ResultSet rs = pst.executeQuery();
