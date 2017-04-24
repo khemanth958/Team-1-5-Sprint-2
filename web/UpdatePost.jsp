@@ -1,15 +1,15 @@
 <%-- 
-    Document   : groups
-    Created on : Apr 22, 2017, 7:33:05 PM
+    Document   : updatepost
+    Created on : Apr 23, 2017, 5:00:41 PM
     Author     : Akshay
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.sql.DriverManager" %>
 <%@ page import="java.sql.ResultSet" %>
 <%@ page import="java.sql.Statement" %>
 <%@ page import="java.sql.PreparedStatement" %> 
 <%@ page import="test.DbManager" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%-- Include tag is used to import header page --%>
 <%@include file="header.jsp" %>
@@ -21,24 +21,17 @@
 </nav>
 <section class="main">
 <table class="table.center">
-     <table>
-         <th>Group_ID</th>
-        <th>Group Name</th>
-        <th>Group Description</th>
-  <c:forEach var="groups" items="${requestScope.groups}">
-        
-        <tr> 
-            <td>${groups.groupID}</td>
-            <td> <a href="GroupServlet?action=${groups.groupName}">${groups.groupName}</a></td>
-            <td> ${groups.groupDescription} </td>
-            <td>${groups.numberOfGroupMembers} </td>
-        </tr>  
-    </c:forEach>
-    
-    
-    
-    
-    </table>
-    </section>
-  <%@ include file="footer.jsp" %>
 
+    <h1>${groupName}</h1>
+    <h1>${showpost}</h1>
+  
+ <form action="UpdatePostServlets" method="Post">
+  Enter Post: <input type="text" name="fname"><br>
+  <input type="hidden" name="groupname" value="${groupName}">
+  <input type="hidden" name="oldpost" value="${showpost}">
+  <input type="submit" value="Submit">
+</form> 
+</table>
+  </section>
+  
+  <%@ include file="footer.jsp" %>
