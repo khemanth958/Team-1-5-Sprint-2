@@ -33,26 +33,26 @@
 
 <section class="login_form">
     <form action="NewPostsServlet" method="Post">
-    <Label> What's on your mind</label>
-    <input type="hidden" value="Uncc_49ers" name="group_name">
+        <label> What's on your mind</label>&nbsp;&nbsp;<input type="hidden" value="Uncc_49ers" name="group_name">
     <input type="text" id="text1" name="input1" required />    
     <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
     </form>
 </section>
         
-  <a href="NewPostsServlet?action=${groupName}">Show Posts</a>      
+        <a href="NewPostsServlet?action=${groupName}&user=${email}">Show Posts</a>      
      <h2>${PostError}</h2>
   
    <table>
          <th>Post_ID</th>
         <th>Post</th>
+        <th>Update</th>
         
   <c:forEach var="postsList" items="${requestScope.postList}">
        
         <tr> 
             <td>${postsList.postId}</td>
-            <td> <a href="GroupServlet?action=${postsList.userPosts}">${postsList.userPosts}</a></td>
-            
+            <td> <a href="UpdatePostServlet?showpost=${postsList.userPosts}&action=${groupName}">${postsList.userPosts}</a></td>
+            <td><a href="UpdatePostServlet?showpost=${postsList.userPosts}&action=${groupName}">Update Post</a></td>
         </tr>  
     </c:forEach>
     

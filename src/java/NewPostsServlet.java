@@ -102,58 +102,41 @@ public class NewPostsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            String action = request.getParameter("action");
+        String action = request.getParameter("action");
+        String showPosts = request.getParameter("showPosts");
+        System.out.println(showPosts);
+        HttpSession session = request.getSession();
+        String user= request.getParameter("email");
+        String pass = request.getParameter("password");
+        String sEmail= (String) session.getAttribute("email");
+        System.out.println(sEmail);
+        System.out.println(pass);
         try {
-            HttpSession session = request.getSession();
+            //HttpSession session = request.getSession();
             //String groupName = request.getParameter("groupName");
             //System.out.println(groupName);
             System.out.println(action);
             ArrayList<Posts> postList = new ArrayList<Posts>();
-            postList = PostDB.getPosts(action);
+            postList = PostDB.getPosts(action,sEmail);
             ArrayList<Posts> value = postList;
-//request.setAttribute("postList", postList);
+            
             request.setAttribute("postList", postList);
             
-            if(value == null){                
-            request.setAttribute("PostError", "Sorry No Posts For this Group");
-            request.setAttribute("groupName", action);
-            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
-            rd.forward(request, response);
+            if(value == null){
+                request.setAttribute("PostError", "Sorry No Posts For this Group");
+                request.setAttribute("groupName", action);
+                RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+                rd.forward(request, response);
             }else{
-            for(int i =0;i<postList.size();i++){
-                   
+                for(int i =0;i<postList.size();i++){
+                    
                     System.out.println(postList.get(i).getPostId());
                 }
-            request.setAttribute("groupName", action);
-            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
-            rd.forward(request, response);
-            
+                request.setAttribute("groupName", action);
+                RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+                rd.forward(request, response);
+                
             }
-            
-            
-//RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
-//rd.forward(request, response);
-/*
-Users user1 = new Users();
-//String userType = user.getUserType();
-
-session.setAttribute("theUser", user);
-//int participants = StudyDB.getParticipants(user.getEmail());
-user1 = UserDB.getUser(user);
-session.setAttribute("user", user1);
-System.out.println(user1.getUserEmail());
-RequestDispatcher rd = request.getRequestDispatcher("userpage.jsp");
-rd.forward(request, response);
-
-} else if (role.equalsIgnoreCase("Admin")) {
-session.setAttribute("theAdmin", user);
-RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
-rd.forward(request, response);
-}
-
-*/
-
-//processRequest(request, response);
         } catch (ClassNotFoundException ex) {
             request.setAttribute("PostError", "Sorry No Posts For this Group");
             RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
@@ -164,8 +147,9 @@ rd.forward(request, response);
             RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
             rd.forward(request, response);
             Logger.getLogger(NewPostsServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+        }           
+    
+   }
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -178,11 +162,7 @@ rd.forward(request, response);
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        
-        
-        
-        processRequest(request, response);
+       processRequest(request, response);
     }
 
     /**

@@ -41,7 +41,9 @@ public class LoginValidation extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-        String role = null;
+        
+            String role = null;
+            int userId = 0;
         String user = request.getParameter("email");
         String pass = request.getParameter("password");
         boolean flag;
@@ -55,13 +57,13 @@ public class LoginValidation extends HttpServlet {
         }else
         {
             System.out.println("Connection Established");
-            PreparedStatement pst = conn.prepareStatement("select r.role as role, u.u_email as email, u.u_password as password from users u, roles r, role_user_relationship rup\n" +
-"where r.role_id = rup.role_id and rup.u_uid = u.u_id and u.u_email = ? and u.u_password = ?");
+            PreparedStatement pst = conn.prepareStatement("select r.role as role,u.u_id , u.u_email as email, u.u_password as password from users u, roles r, role_user_relationship rup where r.role_id = rup.role_id and rup.u_uid = u.u_id and u.u_email = ? and u.u_password = ?");
             pst.setString(1, user);
             pst.setString(2, pass);
             ResultSet rs = pst.executeQuery();
             while(rs.next()) {
                 role = rs.getString("role");
+                userId = rs.getInt("u_id");
                 System.out.println("Correct login credentials");
                 flag=true;
             } 
@@ -77,7 +79,8 @@ public class LoginValidation extends HttpServlet {
                     session.setAttribute("email", user);
                     session.setAttribute("password", pass);
                     session.setAttribute("role", role);
-                    //RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
+                    session.setAttribute("userId",userId);
+//RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
                     //rd.forward(request, response);   
                     
                     Users user1 = new Users();

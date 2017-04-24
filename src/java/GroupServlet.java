@@ -113,7 +113,9 @@ public class GroupServlet extends HttpServlet {
             
         System.out.println("Reached Get Method");
             String action = request.getParameter("action");
-            
+            String userId = request.getParameter("userId");
+            System.out.println(userId);
+            //session.setAttribute("userId",userId);
             
             Group group = new Group();
             String groupName = request.getParameter("action");

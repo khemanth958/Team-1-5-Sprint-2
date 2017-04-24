@@ -39,6 +39,10 @@
         <servlet-name>DisplayDG</servlet-name>
         <servlet-class>DisplayDG</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdatePostServlet</servlet-name>
+        <servlet-class>UpdatePostServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>CreateGroupServlet</servlet-name>
         <url-pattern>/CreateGroupServlet</url-pattern>
@@ -74,6 +78,10 @@
     <servlet-mapping>
         <servlet-name>DisplayDG</servlet-name>
         <url-pattern>/DisplayDG</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdatePostServlet</servlet-name>
+        <url-pattern>/UpdatePostServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
