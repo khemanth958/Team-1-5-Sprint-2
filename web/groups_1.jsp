@@ -21,7 +21,7 @@
         
         <tr> 
             <td>${groups.groupID}</td>
-            <td> <a href="GroupServlet?action=${groups.groupName}&user=${email}">${groups.groupName}</a></td>
+            <td> <a href="GroupServlet?action=${groups.groupName}">${groups.groupName}</a></td>
             <td> ${groups.groupDescription} </td>
             <td>${groups.numberOfGroupMembers} </td>
         </tr>  

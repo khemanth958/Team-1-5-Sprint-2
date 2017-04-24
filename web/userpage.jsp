@@ -25,7 +25,6 @@
     </form>
     <br>
     <h5>${user.getUserEmail()}</h5>
-    <h5>${user.getUserId()}</h5>
     <h4><b>GROUPS</b></h4>
     <div id = "groupsManagement">
         <%
