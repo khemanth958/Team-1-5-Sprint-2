@@ -44,8 +44,8 @@
         <servlet-class>DeletePost</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UpdatePostServlets</servlet-name>
-        <servlet-class>UpdatePostServlets</servlet-class>
+        <servlet-name>UpdatePostServlet</servlet-name>
+        <servlet-class>UpdatePostServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CreateGroupServlet</servlet-name>
@@ -88,8 +88,8 @@
         <url-pattern>/DeletePost</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UpdatePostServlets</servlet-name>
-        <url-pattern>/UpdatePostServlets</url-pattern>
+        <servlet-name>UpdatePostServlet</servlet-name>
+        <url-pattern>/UpdatePostServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

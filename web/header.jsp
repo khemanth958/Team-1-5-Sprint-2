@@ -25,7 +25,7 @@
                         <li><a href="login.jsp">Login</a></li>
                         <li><a href="signup.jsp">Sign Up</a></li>
                     </c:if>
-                        <c:if test="${user.getUserEmail() != null}">
+                        <c:if test="${role != null}">
                         <li><a href="aboutl.jsp?user=Hello,${user.getUserName()}">About Us</a></li>
                         <li><a href="<%=request.getContextPath()%>/LogOutServlet">Log Out</a></li>
                         <li>Hello, ${user.getUserName()}</li>

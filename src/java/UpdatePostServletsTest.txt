@@ -1,0 +1,116 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+import Model.Group;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author Akshay
+ */
+public class UpdatePostServletsTest {
+    
+    public UpdatePostServletsTest() {
+        
+       
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+    
+    @Before
+    public void setUp() {
+        
+        
+    }
+    
+    @After
+    public void tearDown() {
+    }
+
+    // TODO add test methods here.
+    // The methods must be annotated with annotation @Test. For example:
+    //
+    @Test
+    // public void hello() {}
+    public void UpdateTest(){
+        Group group = new Group();
+        String postEditText = null;
+        String action = "groupname";
+        String post = "oldpost";
+        System.out.println(action);  
+        System.out.println(post);
+        System.out.println(postEditText);
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UpdatePostServlets.class.getName()).log(Level.SEVERE, null, ex);
+        }
+               Connection connection;
+                try {
+                    connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ssdi_project", "root", "root");
+                    PreparedStatement   ps = connection.prepareStatement("update posts set post = ? where post= ? ");
+                    //ps.setString(1, postEditText);
+                    ps.setString(2,post);
+                    int i = ps.executeUpdate();
+                    if(i==0){
+                    System.out.println("The post has been updated");
+                }else{
+                    System.out.println("Not updated");
+                }
+                } catch (SQLException ex) {
+                    fail("This should fails as we need to enter a post to update the old post");
+                    Logger.getLogger(UpdatePostServlets.class.getName()).log(Level.SEVERE, null, ex);
+                }
+    }
+    @Test
+    public void UpdateTest2(){
+        Group group = new Group();
+        String postEditText = "fname";
+        String action = "groupname";
+        String post = "oldpost";
+        System.out.println(action);  
+        System.out.println(post);
+        System.out.println(postEditText);
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UpdatePostServlets.class.getName()).log(Level.SEVERE, null, ex);
+        }
+               Connection connection;
+                try {
+                    connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ssdi_project", "root", "root");
+                    PreparedStatement   ps = connection.prepareStatement("update posts set post = ? where post= ? ");
+                    ps.setString(1, postEditText);
+                    ps.setString(2,post);
+                    int i = ps.executeUpdate();
+                    if(i==0){
+                    System.out.println("The post has been updated");
+                }else{
+                    System.out.println("Not updated");
+                }
+                } catch (SQLException ex) {
+                    Logger.getLogger(UpdatePostServlets.class.getName()).log(Level.SEVERE, null, ex);
+                }
+    }
+}

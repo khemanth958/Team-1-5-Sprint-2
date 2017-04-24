@@ -32,6 +32,7 @@ public class UserDB {
 	            	user.setUserEmail(rs.getString("u_email"));
 	            	user.setPassword(rs.getString("u_password"));
                         user.setUserName(rs.getString("u_name"));
+                        System.out.println(user.getUserName());
 	            	user.setUserID(rs.getInt("u_id"));
 	               return user;
 	            }
