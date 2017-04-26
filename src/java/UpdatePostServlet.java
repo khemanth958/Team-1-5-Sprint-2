@@ -127,6 +127,7 @@ public class UpdatePostServlet extends HttpServlet {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException ex) {
+
             Logger.getLogger(UpdatePostServlets.class.getName()).log(Level.SEVERE, null, ex);
         }
                Connection connection;
@@ -146,6 +147,27 @@ public class UpdatePostServlet extends HttpServlet {
                     rd.forward(request, response);
                 } catch (SQLException ex) {
                     Logger.getLogger(UpdatePostServlets.class.getName()).log(Level.SEVERE, null, ex);
+
+            Logger.getLogger(UpdatePostServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+               //Connection connection;
+                try {
+                    connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ssdi_project", "root", "root");
+                    PreparedStatement   ps = connection.prepareStatement("update posts set post = ? where post= ? ");
+                    ps.setString(1, postEditText);
+                    ps.setString(2,post);
+                    int i = ps.executeUpdate();
+                    if(i==0){
+                    System.out.println("The post has been updated");
+                }else{
+                    System.out.println("Not updated");
+                }
+                    request.setAttribute("groupName", action);
+                    RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+                    rd.forward(request, response);
+                } catch (SQLException ex) {
+                    Logger.getLogger(UpdatePostServlet.class.getName()).log(Level.SEVERE, null, ex);
+
                 }
         
         

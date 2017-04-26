@@ -44,6 +44,14 @@
         <servlet-class>DeletePost</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>CommentServlet</servlet-name>
+        <servlet-class>CommentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JoinGroupServlet</servlet-name>
+        <servlet-class>JoinGroupServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>UpdatePostServlet</servlet-name>
         <servlet-class>UpdatePostServlet</servlet-class>
     </servlet>
@@ -86,6 +94,14 @@
     <servlet-mapping>
         <servlet-name>DeletePost</servlet-name>
         <url-pattern>/DeletePost</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CommentServlet</servlet-name>
+        <url-pattern>/CommentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JoinGroupServlet</servlet-name>
+        <url-pattern>/JoinGroupServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdatePostServlet</servlet-name>

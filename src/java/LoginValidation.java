@@ -82,22 +82,32 @@ public class LoginValidation extends HttpServlet {
                     
                     Users user1 = new Users();
                     //String userType = user.getUserType();
-                    if(role.equalsIgnoreCase("user")) {
+                    if(role.equalsIgnoreCase("user")) 
+                    {
 			session.setAttribute("theUser", user);
 			//int participants = StudyDB.getParticipants(user.getEmail());
 			user1 = UserDB.getUser(user);
                         session.setAttribute("user", user1);
                         System.out.println(user1.getUserEmail());
-                        RequestDispatcher rd = request.getRequestDispatcher("userpage.jsp");
+                        RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
                          rd.forward(request, response);
 			
+
 			} else if (role.equalsIgnoreCase("Admin")) {
                             user1 = UserDB.getUser(user);
                         session.setAttribute("user", user1);
 			session.setAttribute("theUser", user);
+
+                    } 
+                    else if (role.equalsIgnoreCase("Admin")) 
+                    {
+                        user1 = UserDB.getUser(user);
+                        session.setAttribute("user", user1);
+                        session.setAttribute("theUser", user);
+
                         RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
                         rd.forward(request, response);
-			}
+                    }
                 
                 
                 }

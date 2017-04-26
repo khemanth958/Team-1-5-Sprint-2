@@ -81,7 +81,8 @@ public class NewPostsServlet extends HttpServlet {
         }
         if(flag==true)
                 {
-                    RequestDispatcher rd = request.getRequestDispatcher(group_name+".jsp");
+                    request.setAttribute("groupName", group_name);
+                    RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
                     rd.forward(request, response);   
                 }
         else{
@@ -117,7 +118,11 @@ public class NewPostsServlet extends HttpServlet {
                 String userName1 = null;
 	        ArrayList<Posts> postsList = new ArrayList<Posts>();
                 try {
+
 	            ps = connection.prepareStatement("select p.post as post, p.post_id as post_id,u.u_id as u_id, u.u_name as uname from posts p, users u, post_user_group_relationship pug, groups g where p.post_id = pug.post_id and pug.u_id = u.u_id and pug.g_id = g.g_id and g.g_name = ? and u.u_email = ?");
+
+	            ps = connection.prepareStatement("select p.post as post, p.post_id as post_id,u.u_id as u_id, u.u_name as uname from posts p, users u, post_user_group_relationship pug, groups g where p.post_id = pug.p_id and pug.u_id = u.u_id and pug.g_id = g.g_id and g.g_name = ? and u.u_emailid = ?");
+
 	            ps.setString(1, groupName);
                     ps.setString(2, userEmail);
 	            rs = ps.executeQuery();
@@ -157,7 +162,6 @@ public class NewPostsServlet extends HttpServlet {
             Logger.getLogger(NewPostsServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     /**
      * Handles the HTTP <code>POST</code> method.
      *
