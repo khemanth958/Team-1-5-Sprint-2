@@ -11,6 +11,7 @@ import Model.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -103,61 +104,49 @@ public class NewPostsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            String action = request.getParameter("action");
+            String groupName = request.getParameter("action");
         try {
             HttpSession session = request.getSession();
-            //String groupName = request.getParameter("groupName");
-            //System.out.println(groupName);
-            String userEmail = (String) session.getAttribute("email");
-            
+            System.out.println(groupName);
+            String userEmail = request.getParameter("email1");
+            String userSessionEmail = (String) session.getAttribute("email");
             System.out.println(userEmail);
-            ArrayList<Posts> postList = new ArrayList<Posts>();
-            postList = PostDB.getPosts(action,userEmail);
-            ArrayList<Posts> value = postList;
-//request.setAttribute("postList", postList);
-            request.setAttribute("postList", postList);
-            
-            if(value == null){                
-            request.setAttribute("PostError", "Sorry No Posts For this Group");
-            request.setAttribute("groupName", action);
-            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
-            rd.forward(request, response);
-            }else{
-            for(int i =0;i<postList.size();i++){
-                   
-                    System.out.println(postList.get(i).getPostId());
+              Class.forName("com.mysql.jdbc.Driver");
+		java.sql.Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ssdi_project","root","root");
+	        PreparedStatement ps = null;
+	        ResultSet rs = null;
+                String userName1 = null;
+	        ArrayList<Posts> postsList = new ArrayList<Posts>();
+                try {
+	            ps = connection.prepareStatement("select p.post as post, p.post_id as post_id,u.u_id as u_id, u.u_name as uname from posts p, users u, post_user_group_relationship pug, groups g where p.post_id = pug.p_id and pug.u_id = u.u_id and pug.g_id = g.g_id and g.g_name = ? and u.u_emailid = ?");
+	            ps.setString(1, groupName);
+                    ps.setString(2, userEmail);
+	            rs = ps.executeQuery();
+	            while (rs.next()) {
+                        //Group group = new Group();
+                        System.out.println("Posts Found");
+	            	Posts user = new Posts();
+	            	user.setPostId(rs.getInt("post_id"));
+	            	user.setUserPosts(rs.getString("post"));
+	                postsList.add(user);
+                    }
+	        } catch (SQLException e) {
+	            System.out.println(e);
+	        } 
+                session.setAttribute("postList", postsList);
+                session.setAttribute("groupName",groupName);
+                session.setAttribute("email",userEmail);
+            for(int i =0;i<postsList.size();i++){
+                 System.out.println(postsList.get(i).getPostId());
+                 System.out.println(postsList.get(i).getPostId());
                 }
-            request.setAttribute("groupName", action);
-            RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+            
+            request.setAttribute("groupName", groupName);
+            System.out.println(groupName);
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayUserPost.jsp");
             rd.forward(request, response);
-            
-            }
-            
-            
-//RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
-//rd.forward(request, response);
-/*
-Users user1 = new Users();
-//String userType = user.getUserType();
-
-session.setAttribute("theUser", user);
-//int participants = StudyDB.getParticipants(user.getEmail());
-user1 = UserDB.getUser(user);
-session.setAttribute("user", user1);
-System.out.println(user1.getUserEmail());
-RequestDispatcher rd = request.getRequestDispatcher("userpage.jsp");
-rd.forward(request, response);
-
-} else if (role.equalsIgnoreCase("Admin")) {
-session.setAttribute("theAdmin", user);
-RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
-rd.forward(request, response);
-}
-
-*/
-
-//processRequest(request, response);
-        } catch (ClassNotFoundException ex) {
+           }
+           catch (ClassNotFoundException ex) {
             request.setAttribute("PostError", "Sorry No Posts For this Group");
             RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
             rd.forward(request, response);
@@ -169,7 +158,6 @@ rd.forward(request, response);
             Logger.getLogger(NewPostsServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     /**
      * Handles the HTTP <code>POST</code> method.
      *

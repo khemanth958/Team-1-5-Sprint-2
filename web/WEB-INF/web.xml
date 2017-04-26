@@ -47,6 +47,14 @@
         <servlet-name>CommentServlet</servlet-name>
         <servlet-class>CommentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>JoinGroupServlet</servlet-name>
+        <servlet-class>JoinGroupServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdatePostServlet</servlet-name>
+        <servlet-class>UpdatePostServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>CreateGroupServlet</servlet-name>
         <url-pattern>/CreateGroupServlet</url-pattern>
@@ -90,6 +98,14 @@
     <servlet-mapping>
         <servlet-name>CommentServlet</servlet-name>
         <url-pattern>/CommentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JoinGroupServlet</servlet-name>
+        <url-pattern>/JoinGroupServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdatePostServlet</servlet-name>
+        <url-pattern>/UpdatePostServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

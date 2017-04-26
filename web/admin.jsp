@@ -22,28 +22,59 @@
     <h4><b>GROUPS</b></h4>
     <div id = "groupsManagement">
         <%
+        String emailid = session.getAttribute("email").toString();
         DbManager db = new DbManager();
         java.sql.Connection conn = db.getConnection();
+        Statement stmtForAdmin=conn.createStatement();
+        Statement stmtForUser = conn.createStatement();
+        String role = session.getAttribute("role").toString();
+        System.out.println("role---------------- is "+role);
         if(conn == null)
         {
                 out.print("Connection not established");
         }else
         {
-                //out.print("Connection Established");
-                String query="SELECT * FROM groups";
-                Statement stmt=conn.createStatement();
-                ResultSet rs=stmt.executeQuery(query);  
-
-                while(rs.next())
+            System.out.println("role is ADMIN");
+            String queryForAdmin="SELECT * FROM groups";
+            String queryForUser = "select g.g_name as group_name from groups g, group_user_relationship gu, users u where g.g_id = gu.g_id and gu.u_id = u.u_id and u.u_emailid = '"+emailid+"'";
+            try
+            {
+                if (role.equals("admin")) 
                 {
-
-                %>
-                <table>
+                   System.out.println("role is ADMIN");
+                   ResultSet rs = stmtForAdmin.executeQuery(queryForAdmin);
+                   while(rs.next())
+                   {
+                      %>
+                      <table>
                     <tr>
                         <td><input type="button" value="<%=rs.getString("g_name")%>" id="<%=rs.getString("g_name")%>" onclick="getToGroup('<%=rs.getString("g_name")%>')"></td>
                         <td><input type="button" value="Delete" id="<%=rs.getString("g_id")%>" onclick="Delete_row('<%=rs.getString("g_id")%>')"></td>
                     </tr>
-                 <%}
+                      </table>
+                      <% 
+                   }
+                }
+                else
+                {
+                    System.out.println("User is arrived");
+                    ResultSet rs1=stmtForUser.executeQuery(queryForUser);
+                    while(rs1.next())
+                    {
+                       %>
+                       <table>
+                        <tr>
+                            <td><input type="button" value="<%=rs1.getString("group_name")%>" id="<%=rs1.getString("group_name")%>" onclick="getToGroup('<%=rs1.getString("group_name")%>')"></td>
+                        </tr>
+                       </table>
+                       <% 
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
         }
                 %>
         </div>
@@ -51,7 +82,7 @@
         <script>
         function getToGroup(group_name)
         {
-            window.location.href = group_name+".jsp";
+            window.location.href = "GroupServlet?action="+group_name;
         }
                
         function Delete_row(group_id)

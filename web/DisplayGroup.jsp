@@ -19,33 +19,92 @@
 <nav id="menu">
      <ul><%-- Added the EL tag ${email} to display the users email instead of static name--%>
             <li><a href="admin.jsp?user=Admin ${email}">Home</a></li>
+            <li><a href="NewPostsServlet?action=${groupName}&email1=${email}">Show My Posts</a></li>
      </ul>    <%--On clicking the Reported Question link it will be directed  to the reportques.jsp--%>
 </nav>
 
 <section class="main">
     <%-- Img tag is used to import image --%>
-             <center><h1>${groupName}</h1><center>
-             <hr>
-        <input type="submit" value="Join" id="join_group_button" onClick="${groupName}">
-        <br>
-        
-        
-
-<section class="login_form">
-    <form action="NewPostsServlet" method="Post">
-    <Label> What's on your mind</label>
-    <input type="hidden" value="${groupName}" name="group_name">
-    <input type="text" id="text1" name="input1" required />    
-    <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
-    </form>
-</section>
+             <center><h1>${groupName}</h1></center>
+            <% 
+            String p = session.getAttribute("role").toString();
+            String group_name = request.getAttribute("groupName").toString();
+            String email_id = session.getAttribute("email").toString();
+            try
+            {
+                if (p.equals("admin")) 
+                {
+                %>
+                <input type="hidden" value="Join" id="join_group_button" onClick="${groupName}">
+                <br>
+                <section class="login_form">
+                    <form action="NewPostsServlet" method="Post">
+                    <%--<Label type="hidden"> What's on your mind</label>--%>
+                    <input type="hidden" value="${groupName}" name="group_name">
+                    </form>
+                </section>
+                <%
+                }
+                else
+                {
+                    DbManager db = new DbManager();
+                    java.sql.Connection conn = db.getConnection();
+                    if(conn == null)
+                    {
+                        out.print("Connection not established");
+                    }else
+                    {
+                        //out.print("Connection Established");
+                        System.out.println("email Id is "+email_id);
+                        //String p = session.getAttribute("role").toString();
+                        int post_id = 0;
+                        String queryForCheckJoin="select gu.u_id from group_user_relationship gu, users u where gu.u_id = u.u_id and u.u_emailid = '"+email_id+"' and gu.g_id = (select g_id from groups where g_name = '"+group_name+"')";
+                        Statement stmtJoin = conn.createStatement();
+                        ResultSet rscheck=stmtJoin.executeQuery(queryForCheckJoin);
+                        if (rscheck.next()) 
+                        {
+                        %>
+                            <input type="hidden" value="Join" id="join_group_button" onClick="Join('${groupName}','${email}')">
+                            <br>
+                            <section class="login_form">
+                                <form action="NewPostsServlet" method="Post">
+                                <Label> What's on your mind</label>
+                                <input type="hidden" value="${groupName}" name="group_name">
+                                <input type="text" id="text1" name="input1" required />    
+                                <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
+                                </form>
+                            </section>
+                        <%
+                        }
+                        else
+                        {
+                        %>
+                        <input type="submit" value="Join" id="join_group_button" onClick="Join('${groupName}','${email}')">
+                        <br>
+                            <section class="login_form" id = "post_section" style="visibility: hidden">
+                                <form action="NewPostsServlet" method="Post">
+                                <Label> What's on your mind</label>
+                                <input type="hidden" value="${groupName}" name="group_name">
+                                <input type="text" id="text1" name="input1" required />    
+                                <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
+                                </form>
+                            </section>
+                        <%
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+                %>
         
   <section class="main">
-      <p id = "demo"></p> 
     <div id="main">
         <table>
         <%
-        String group_name = request.getAttribute("groupName").toString();
+        
         System.out.println("The group name is ---- "+group_name);
         DbManager db = new DbManager();
         java.sql.Connection conn = db.getConnection();
@@ -55,9 +114,9 @@
         }else
         {
             //out.print("Connection Established");
-            String email_id = session.getAttribute("email").toString();
+            
             System.out.println("email Id is "+email_id);
-            String p = session.getAttribute("role").toString();
+            //String p = session.getAttribute("role").toString();
             int post_id = 0;
             String query1="select p.post as post_text, p.post_id as post_id,u.u_id as u_id, u.u_name as uname from posts p, users u, post_user_group_relationship pug, groups g where p.post_id = pug.p_id and pug.u_id = u.u_id and pug.g_id = g.g_id and g.g_name = '"+group_name+"'";
             Statement stmtForPost=conn.createStatement();
@@ -151,15 +210,39 @@
             }
         }   
                 %>
-        </table>
-    </div>
-</section>
+                    </table>
+                </div>
+            </section>
+        </section>        
 <script>
 
-    function Join(group_name)
+    function Join(group_name,email)
         {
-            alert("Your request has been sent");
-            document.getElementById("join_group_button").value = "Request Sent";
+            if (document.getElementById("join_group_button").value != "Joined") 
+            {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function()
+                {
+                    if(xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                    {
+                        if((xmlhttp.responseText) == "Joined")
+                        {
+                            document.getElementById("join_group_button").value = "Joined";
+                            document.getElementById("post_section").style.visibility = "visible";
+                        }
+                        else
+                            alert("Member Limit reached. Cant Join this group");
+                    }
+                };
+
+                var params= "group_name="+group_name+";email="+email+";";
+                //var params= "g_id="+group_id;
+                xmlhttp.open("Post","/SSDI_Project/JoinGroupServlet",true);
+                xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+                xmlhttp.send(params);
+                //xmlhttp.send(param1);
+                //xmlhttp.send(params2);
+            }
         }
     
     function Insert_or_Delete(post_id,role,user_id,button_id)
