@@ -111,6 +111,23 @@ textarea {
     border-radius: 0.5em;
 }
 
+#comment_button {
+    /* To position the buttons to the same position of the text fields */
+    /* same size as the label elements */
+    /* To position the buttons to the same position of the text fields */
+    /* same size as the label elements */
+    float: left;
+    margin-left: 240px;
+    width:150px;
+    margin-top: 30px;
+    background-color: #475D9F;
+    color: white;
+    margin-bottom: 50px;
+    border-color: #475D9F;
+    border-radius: 0.5em;
+}
+
+
 nav{
     background-color: #f1f1f1;
     margin:0;

@@ -140,7 +140,7 @@
                             <tr>
                             <td><%=rs.getString("uname") %></td>
                             <td><%=rs.getString("post_text") %></td>
-                            <td><input type="button" id="delete_<%=i%>" value="Delete" onclick="Insert_or_Delete('<%=rs.getInt("post_id") %>','<%=p %>','<%=email_id %>','delete_<%=i%>')"/></td>
+                            <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Insert_or_Delete('<%=rs.getInt("post_id") %>','<%=p %>','<%=email_id %>','delete_<%=i%>')"/></td>
                             </tr>
                         <%
                     }
@@ -163,15 +163,15 @@
                             <tr>
                             <td><%=rs.getString("uname") %></td>
                             <td><%=rs.getString("post_text") %></td>
-                            <td><input type="button" id="like_<%=i%>" value="Liked" ></td>
-                            <td><a href ="comment1.jsp?post_id=<%=post_id %>">Comment</a></td>
+                            <td><input type="button" id="like_<%=i%>" style="width:auto" value="Liked" ></td>
+                            <td><a href ="comment1.jsp?post_id=<%=post_id %>">Show Comments</a></td>
                             <%
                                 while(rs2.next())
                                 {
                                     if (rs2.getInt("u_id") == rs.getInt("u_id")) 
                                     {
                                     %>
-                                        <td><input type="button" id="delete_<%=i%>" value="Delete" onclick="Delete_User_Post('<%=rs.getInt("post_id") %>','delete_<%=i%>')"/></td>
+                                        <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Delete_User_Post('<%=rs.getInt("post_id") %>','delete_<%=i%>')"/></td>
                                     <%
                                     }
                                 }
@@ -185,15 +185,15 @@
                             <tr>
                             <td><%=rs.getString("uname") %></td>
                             <td><%=rs.getString("post_text") %></td>
-                            <td><input type="button" id="like_<%=i%>" value="Like" onclick="Insert_or_Delete('<%=rs.getInt("post_id") %>','<%=p %>','<%=email_id %>','like_<%=i%>')"/></td>
-                            <td><a href = "comment1.jsp?post_id=<%=post_id %>">Comment</a></td>
+                            <td><input type="button" id="like_<%=i%>" value="Like" style="width:auto" onclick="Insert_or_Delete('<%=rs.getInt("post_id") %>','<%=p %>','<%=email_id %>','like_<%=i%>')"/></td>
+                            <td><a href = "comment1.jsp?post_id=<%=post_id %>">Show Comments</a></td>
                             <%
                                 while(rs2.next())
                                 {
                                     if (rs2.getInt("u_id") == rs.getInt("u_id")) 
                                     {
                                     %>
-                                        <td><input type="button" id="delete_<%=i%>" value="Delete" onclick="Delete_User_Post('<%=rs.getInt("post_id") %>','delete_<%=i%>')"/></td>
+                                        <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Delete_User_Post('<%=rs.getInt("post_id") %>','delete_<%=i%>')"/></td>
                                     <%
                                     }
                                 }

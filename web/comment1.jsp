@@ -19,10 +19,14 @@
 <nav id="menu">
      <ul><%-- Added the EL tag ${email} to display the users email instead of static name--%>
             <li><a href="admin.jsp?user=Admin ${email}">Home</a></li>
+                        <li><a href="GroupServlet?action=${groupName}&email=${email}">Back</a></li>
+
      </ul>    <%--On clicking the Reported Question link it will be directed  to the reportques.jsp--%>
 </nav>
         <section class="main">
     <div id="main">
+        <label style="font-size: xx-large;font-weight: bold;width:auto"> Post</label>&nbsp;&nbsp;&nbsp;&nbsp;
+        
         <%--<h3><label>${msgForComment}</label></h3>--%>
         <%
         String email_id = session.getAttribute("email").toString();
@@ -45,11 +49,11 @@
                     while(rs.next())
                     {
                     %>
-                    <label><%=rs.getString("uname")%></label>
-                        <textarea rows="5" cols="100" readonly>
+                    <label style="font-size: x-large;font-weight: bold;width:auto"><%=rs.getString("uname")%>: </label>
+                    <label style="font-size: x-large;font-weight: bold;width:auto" readonly>
                             <%=rs.getString("post_text")%>
 
-                        </textarea>        
+                        </label>        
                     <%
                     }
             }
@@ -60,6 +64,7 @@
         }
         %>
     </div>
+    <hr>
     <div>
         <table readonly>
             <th>From</th>
@@ -96,6 +101,7 @@
          %>
         </table>
     </div>
+        <hr>
     <form action="CommentServlet" method="Post"> 
         <label >Comment Here</label>
         <input type="text" name="comment" required/> <br>
