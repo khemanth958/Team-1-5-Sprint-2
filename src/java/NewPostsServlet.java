@@ -81,7 +81,8 @@ public class NewPostsServlet extends HttpServlet {
         }
         if(flag==true)
                 {
-                    RequestDispatcher rd = request.getRequestDispatcher(group_name+".jsp");
+                    request.setAttribute("groupName", group_name);
+                    RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
                     rd.forward(request, response);   
                 }
         else{
