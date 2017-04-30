@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import Data.JoinGroupDB;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
@@ -84,28 +85,19 @@ public class JoinGroupServlet extends HttpServlet {
             
             try 
             {
-                DbManager db = new DbManager();
-                java.sql.Connection conn = db.getConnection();
-                if (conn == null) 
+                System.out.println("Connection Established");
+                int theCount = JoinGroupDB.JoinTheGroup(group_name, email);
+                System.out.println(theCount);
+                if (theCount == 0) 
                 {
-                    System.out.println("Connection not established");
-                } else 
+                    response.getOutputStream().print("Cant join. Member Limit reached");
+                } else if (theCount == 1) 
                 {
-                    System.out.println("Connection Established");
-                    CallableStatement myproc = conn.prepareCall("call Join_Group(?,?,?)");
-                    myproc.setString(1, group_name);
-                    myproc.setString(2, email);                
-                    myproc.registerOutParameter(3, Types.INTEGER);
-                    myproc.execute();
-                    int theCount = myproc.getInt(3);
-                    System.out.println(theCount);
-                    if (theCount == 0) 
-                    {
-                        response.getOutputStream().print("Cant join. Member Limit reached");
-                    } else if (theCount == 1) 
-                    {
-                        response.getOutputStream().print("Joined");
-                    }
+                    response.getOutputStream().print("Joined");
+                }
+                else if (theCount == -1) 
+                {
+                    throw new Exception("Exception caused in stored procedure");
                 }
             } catch (Exception ex) 
             {

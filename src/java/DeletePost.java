@@ -4,11 +4,14 @@
  * and open the template in the editor.
  */
 
+import Data.PostDB;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -74,37 +77,24 @@ public class DeletePost extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
     {
-        String post_id = request.getParameter("post_id");
+        String string_Post_id = request.getParameter("post_id");
         //java.lang.String.split(String regex):
-        
+        int post_id = Integer.parseInt(string_Post_id);
         System.out.println(post_id);
         
         try
         {
-            DbManager db = new DbManager();
-            java.sql.Connection conn = db.getConnection();
-            if(conn == null)
+            int theCount = PostDB.DeletePost(post_id);
+            if (theCount == 0) 
             {
-                System.out.println("Connection not established");
-            }
-            else
-            {
-                System.out.println("Connection Established");
-                CallableStatement  myproc = conn.prepareCall("call Delete_User_Post(?,?)");
-                myproc.setString(1,post_id);          
-                myproc.registerOutParameter(2,Types.INTEGER);
-                myproc.execute();
-                int theCount = myproc.getInt(2);
-                System.out.println(theCount);
-                if (theCount == 0) 
-                {
-                    response.getOutputStream().print("Deleted");
-                }
+                response.getOutputStream().print("Deleted");
             }
         }
-        catch (SQLException e) 
+        catch (SQLException e)
         {
             System.out.println(e);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DeletePost.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

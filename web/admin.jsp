@@ -6,8 +6,8 @@
 <%-- Code to display items in List --%>
 <nav id="menu">
      <ul><%-- Added the EL tag ${email} to display the users email instead of static name--%>
-            <li><a href="admin.jsp?user=${role} ${email}">Home</a></li>
-            <li><a href="create_group.jsp?user=${role} ${email} ">Create Group</a></li>
+            <li><a href="admin.jsp?user=${user.getRole()} ${user.getUserEmail()}">Home</a></li>
+            <li><a href="create_group.jsp?user=${user.getRole()} ${user.getUserEmail()} ">Create Group</a></li>
      </ul>    <%--On clicking the Reported Question link it will be directed  to the reportques.jsp--%>
 </nav>
 <%-- Section tag is used to write description  --%>
@@ -20,64 +20,24 @@
     <br>
     <h5>${user.getUserEmail()}</h5>
     <h4><b>GROUPS</b></h4>
-    <div id = "groupsManagement">
-        <%
-        String emailid = session.getAttribute("email").toString();
-        DbManager db = new DbManager();
-        java.sql.Connection conn = db.getConnection();
-        Statement stmtForAdmin=conn.createStatement();
-        Statement stmtForUser = conn.createStatement();
-        String role = session.getAttribute("role").toString();
-        System.out.println("role---------------- is "+role);
-        if(conn == null)
-        {
-                out.print("Connection not established");
-        }else
-        {
-            System.out.println("role is ADMIN");
-            String queryForAdmin="SELECT * FROM groups";
-            String queryForUser = "select g.g_name as group_name from groups g, group_user_relationship gu, users u where g.g_id = gu.g_id and gu.u_id = u.u_id and u.u_emailid = '"+emailid+"'";
-            try
-            {
-                if (role.equals("admin")) 
-                {
-                   System.out.println("role is ADMIN");
-                   ResultSet rs = stmtForAdmin.executeQuery(queryForAdmin);
-                   while(rs.next())
-                   {
-                      %>
-                      <table>
-                    <tr>
-                        <td><input type="button" value="<%=rs.getString("g_name")%>" id="<%=rs.getString("g_name")%>" onclick="getToGroup('<%=rs.getString("g_name")%>')"></td>
-                        <td><input type="button" value="Delete" id="<%=rs.getString("g_id")%>" onclick="Delete_row('<%=rs.getString("g_id")%>')"></td>
-                    </tr>
-                      </table>
-                      <% 
-                   }
-                }
-                else
-                {
-                    System.out.println("User is arrived");
-                    ResultSet rs1=stmtForUser.executeQuery(queryForUser);
-                    while(rs1.next())
-                    {
-                       %>
-                       <table>
-                        <tr>
-                            <td><input type="button" value="<%=rs1.getString("group_name")%>" id="<%=rs1.getString("group_name")%>" onclick="getToGroup('<%=rs1.getString("group_name")%>')"></td>
-                        </tr>
-                       </table>
-                       <% 
-                    }
-                }
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-                %>
-        </div>
+    <div id = "groupsManagement" style="width:auto">
+        <table style="width: auto">
+         <th>Group_ID</th>
+        <th>Group Name</th>
+        <th>Group Description</th>
+  <c:forEach var="groups" items="${requestScope.groups}">
+        <tr> 
+            <td>${groups.groupID}</td>
+            <td> <a href="GroupServlet?action=${groups.groupName}">${groups.groupName}</a></td>
+            <td> ${groups.groupDescription} </td>
+        </tr>  
+    </c:forEach>
+    
+    
+    
+    
+    </table>
+    </div>
 
         <script>
         function getToGroup(group_name)

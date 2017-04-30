@@ -4,6 +4,10 @@
     Author     : Viranchi
 --%>
 
+<%@page import="Model.Comment"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="Model.Posts"%>
+<%@page import="Model.Users"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.DriverManager" %>
 <%@ page import="java.sql.ResultSet" %>
@@ -18,8 +22,8 @@
 
 <nav id="menu">
      <ul><%-- Added the EL tag ${email} to display the users email instead of static name--%>
-            <li><a href="admin.jsp?user=Admin ${email}">Home</a></li>
-                        <li><a href="GroupServlet?action=${groupName}&email=${email}">Back</a></li>
+            <li><a href="admin.jsp?user=Admin ${user.getUserEmail()}">Home</a></li>
+                        <%--<li><a href="GroupServlet?action=${groupName}&email=${user.getUserEmail()}">Back</a></li>--%>
 
      </ul>    <%--On clicking the Reported Question link it will be directed  to the reportques.jsp--%>
 </nav>
@@ -29,34 +33,20 @@
         
         <%--<h3><label>${msgForComment}</label></h3>--%>
         <%
-        String email_id = session.getAttribute("email").toString();
-        String post_id = request.getParameter("post_id").toString();
+        Users user = (Users)session.getAttribute("user");
+        Posts thePost = (Posts)request.getAttribute("thePost");
+        ArrayList<Comment> commentList = (ArrayList<Comment>)request.getAttribute("commentList"); 
+        String email_id = user.getUserEmail();
+        //String post_id = request.getParameter("post_id").toString();
         System.out.println("email Id is "+email_id);
         try
         {
-            DbManager db = new DbManager();
-            java.sql.Connection conn = db.getConnection();
-            if(conn == null)
-            {
-                out.print("Connection not established");
-            }else
-            {
-                //out.print("Connection Established");
-                System.out.println("email Id is "+email_id);
-                String query1="select p.post as post_text, u.u_name as uname from posts p, users u, post_user_relationship pu where p.post_id = pu.post_id and pu.u_id = u.u_id and p.post_id="+post_id;
-                Statement stmtForPost=conn.createStatement();
-                ResultSet rs=stmtForPost.executeQuery(query1);
-                    while(rs.next())
-                    {
-                    %>
-                    <label style="font-size: x-large;font-weight: bold;width:auto"><%=rs.getString("uname")%>: </label>
-                    <label style="font-size: x-large;font-weight: bold;width:auto" readonly>
-                            <%=rs.getString("post_text")%>
-
-                        </label>        
-                    <%
-                    }
-            }
+            %>
+            <label style="font-size: x-large;font-weight: bold;width:auto"><%=thePost.getuName() %>: </label>
+            <label style="font-size: x-large;font-weight: bold;width:auto" readonly>
+                    <%=thePost.getUserPosts() %>
+            </label>        
+            <%   
         }
         catch(Exception e)
         {
@@ -65,6 +55,8 @@
         %>
     </div>
     <hr>
+    <%--<h3 style="color: blue">${msgOfComment}</h3>
+    <hr>--%>
     <div>
         <table readonly>
             <th>From</th>
@@ -72,27 +64,16 @@
         <%       
         try
         {
-            DbManager db1 = new DbManager();
-            java.sql.Connection conn1 = db1.getConnection();
-            Statement stmtForComments = conn1.createStatement();
-            if(conn1 == null)
+            for (int i = 0; i < commentList.size(); i++)
             {
-                out.print("Connection not established");
-            }else
-            {
-                //out.print("Connection Established");
-                String query2="select comment_t as comment, u.u_name as uname from comments c, users u where u.u_id = c.u_id and c.post_id="+post_id;
-                ResultSet rs1 = stmtForComments.executeQuery(query2);
-                while(rs1.next())
-                {
-                %>
-                <tr>
-                <td><%=rs1.getString("uname") %></td>
-                <td><%=rs1.getString("comment") %></td>
-                </tr>
-                <%
-                }
+            %>
+            <tr>
+                <td><%=commentList.get(i).getU_name() %></td>
+                <td><%=commentList.get(i).getComment_text() %></td>
+            </tr>
+            <%
             }
+            
         }
         catch(Exception ex)
         {
@@ -105,7 +86,7 @@
     <form action="CommentServlet" method="Post"> 
         <label >Comment Here</label>
         <input type="text" name="comment" required/> <br>
-        <input type ="hidden" value="<%=post_id %>" name ="post_id">
+        <input type ="hidden" value="<%=thePost.getPostId() %>" name ="post_id">
         <input type="submit" value="Submit Comment" id="comment_button" >
         <br>
     </form>

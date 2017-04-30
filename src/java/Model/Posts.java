@@ -5,6 +5,8 @@
  */
 package Model;
 
+import java.util.*;
+
 /**
  *
  * @author Akshay
@@ -12,7 +14,10 @@ package Model;
 public class Posts {
     private int postId;
     private String userPosts;
-
+    private ArrayList<Like> listOfLikes;
+    private String uName;
+    private int uId; 
+            
     public Posts(int postId,String userPosts){
         this.postId = postId;
         this.userPosts = userPosts;
@@ -50,6 +55,48 @@ public class Posts {
      */
     public void setUserPosts(String userPosts) {
         this.userPosts = userPosts;
+    }
+
+    /**
+     * @return the listOfLikes
+     */
+    public ArrayList<Like> getListOfLikes() {
+        return listOfLikes;
+    }
+
+    /**
+     * @param listOfLikes the listOfLikes to set
+     */
+    public void setListOfLikes(ArrayList<Like> listOfLikes) {
+        this.listOfLikes = listOfLikes;
+    }
+
+    /**
+     * @return the uName
+     */
+    public String getuName() {
+        return uName;
+    }
+
+    /**
+     * @param uName the uName to set
+     */
+    public void setuName(String uName) {
+        this.uName = uName;
+    }
+
+    /**
+     * @return the uId
+     */
+    public int getuId() {
+        return uId;
+    }
+
+    /**
+     * @param uId the uId to set
+     */
+    public void setuId(int uId) {
+        this.uId = uId;
     }
 
 

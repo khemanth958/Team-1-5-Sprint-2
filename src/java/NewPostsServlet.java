@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 
+import Data.GroupDB;
 import Data.PostDB;
 import Data.UserDB;
+import Model.Group;
 import Model.Posts;
 import Model.Users;
 import java.io.IOException;
@@ -43,51 +45,64 @@ public class NewPostsServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException 
+    {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            
-        String text1 = request.getParameter("input1");
-        String group_name = request.getParameter("group_name");
-        System.out.println(group_name);
-        boolean flag;
-        flag=false;
-        try{
-        DbManager db = new DbManager();
-        java.sql.Connection conn = db.getConnection();
-        if(conn == null)
+        try (PrintWriter out = response.getWriter()) 
         {
-	System.out.println("Connection not established");
-        }else
-        {
+            Group newGroup = new Group();
+            Posts newPost = new Posts();
             HttpSession session = request.getSession();
-            System.out.println("Connection Established");
-            CallableStatement  myproc = conn.prepareCall("call Insert_Post(?,?,?,?)");
-                myproc.setString(1,session.getAttribute("email").toString());
-                myproc.setString(2,group_name);
-                myproc.setString(3,text1);
-                myproc.registerOutParameter(4,Types.INTEGER);
-                myproc.execute();
-                int theCount = myproc.getInt(4);
-                System.out.println(theCount);
-                if (theCount > 0) 
+            Users newUser = (Users)session.getAttribute("user");
+            
+            boolean flag = false;
+            
+            newPost.setUserPosts(request.getParameter("input1"));
+            newGroup.setGroupName(request.getParameter("group_name"));
+            
+            System.out.println(newGroup.getGroupName());
+            
+            try
+            {
+                System.out.println("Connection Established");
+                int theCount = PostDB.InsertPost(newUser, newGroup, newPost);
+                if (theCount == 1) 
                 {
                     flag = true;
-                } 
-            
-        }
-        }catch (SQLException e) {
-            System.out.println(e);
-        }
-        if(flag==true)
-                {
-                    request.setAttribute("groupName", group_name);
-                    RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
-                    rd.forward(request, response);   
                 }
-        else{
+            }
+            catch (ClassNotFoundException | SQLException e)
+            {
+                System.out.println(e);
+            }
+            if(flag)
+            {
+                ArrayList<Posts> newListOfPost = new ArrayList<Posts>();
+            //System.out.println(groupName);
+                try 
+                {
+                    newGroup = GroupDB.getGroupAttributes(newGroup.getGroupName());
+                    boolean isJoined = GroupDB.IsJoined(newGroup.getGroupName(), newUser.getUserId());
+                    newListOfPost = PostDB.getAllPost(newGroup.getGroupName());
+                    System.out.println(newGroup.getGroupID());
+                    request.setAttribute("posts", newListOfPost);
+                    request.setAttribute("isJoined", isJoined);
+                    request.setAttribute("group", newGroup);
+                    //request.setAttribute("groupName", groupName);
+                    RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
+                    rd.forward(request, response);
+                } catch (ClassNotFoundException ex) 
+                {
+                    Logger.getLogger(GroupServlet.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) 
+                {
+                    Logger.getLogger(GroupServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }   
+            }
+            else
+            {
             System.out.println("Please enter correct credentials to login ");
-        }
+            }
             /* TODO output your page here. You may use following sample code. */
         }
     }
@@ -103,8 +118,9 @@ public class NewPostsServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-            String groupName = request.getParameter("action");
+            throws ServletException, IOException 
+    {
+        String groupName = request.getParameter("action");
         try {
             HttpSession session = request.getSession();
             System.out.println(groupName);

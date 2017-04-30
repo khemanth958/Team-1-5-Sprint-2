@@ -4,10 +4,19 @@
  * and open the template in the editor.
  */
 
+import Data.CommentDB;
+import Data.PostDB;
+import Model.Comment;
+import Model.Posts;
+import Model.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,35 +45,22 @@ public class CommentServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String comment_text = request.getParameter("comment");
-            String post_id = request.getParameter("post_id");
-            String emailid = (String)request.getSession().getAttribute("email");
-            int user_id = 0;
+            int post_id = Integer.parseInt(request.getParameter("post_id"));
+            Users user = (Users)request.getSession().getAttribute("user");
+            int user_id = user.getUserId();
+            
+            Posts thePost = new Posts();
+            ArrayList<Comment> commentList = new ArrayList<Comment>();
+            
             int count = 0;
             try
             {             
-                DbManager db = new DbManager();
-                java.sql.Connection conn = db.getConnection();
-                if(conn == null)
+                if (user_id != 0) 
                 {
-                System.out.println("Connection not established");
-                }else
-                {
-                    System.out.println("Connection Established");
-                    PreparedStatement pst = conn.prepareStatement("select u_id from users where u_emailid = ?");
-                    pst.setString(1, emailid);
-                    ResultSet rs = pst.executeQuery();
-                    while(rs.next()) 
-                    {
-                        user_id = rs.getInt("u_id");
-                    }
-                    if (user_id != 0) 
-                    {
-                        PreparedStatement pst1 = conn.prepareStatement("insert into comments(post_id, u_id, comment_t) values("+post_id+","+user_id+",?)");
-                        pst1.setString(1, comment_text);
-                        count = pst1.executeUpdate();
-                    }
-
-                } 
+                    count = CommentDB.InsertComment(post_id, user_id, comment_text);
+                }
+                thePost = PostDB.getPostsOnID(post_id);
+                commentList = CommentDB.getCommentList(post_id);
             }
             catch(Exception ex)
             {
@@ -74,13 +70,17 @@ public class CommentServlet extends HttpServlet {
             if (count == 1) 
             {
                 request.setAttribute("msgOfComment", "added the comment");
-                RequestDispatcher rd = request.getRequestDispatcher("/comment1.jsp?post_id="+post_id);
+                request.setAttribute("thePost", thePost);
+                request.setAttribute("commentList", commentList);
+                RequestDispatcher rd = request.getRequestDispatcher("comment1.jsp");
                 rd.forward(request, response);
             }
             else
             {
                 request.setAttribute("msgOfComment", "Cant add the comment");
-                RequestDispatcher rd = request.getRequestDispatcher("/comment1.jsp?post_id="+post_id);
+                request.setAttribute("thePost", thePost);
+                request.setAttribute("commentList", commentList);
+                RequestDispatcher rd = request.getRequestDispatcher("comment1.jsp");
                 rd.forward(request, response);
             }
         }
@@ -96,9 +96,38 @@ public class CommentServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+    {
+        System.out.println("Reached the CommentServlet Get Method");
+        int post_Id = Integer.parseInt(request.getParameter("post_id"));
+        Posts thePost = new Posts();
+        ArrayList<Comment> commentList = new ArrayList<Comment>();;
+        try 
+        {   
+            thePost = PostDB.getPostsOnID(post_Id);
+            commentList = CommentDB.getCommentList(post_Id);
+        } 
+        catch (SQLException ex) 
+        {
+            Logger.getLogger(CommentServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) 
+        {
+            Logger.getLogger(CommentServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (!(thePost.getuName().isEmpty())) 
+        {
+            request.setAttribute("thePost", thePost);
+            request.setAttribute("commentList", commentList);
+            RequestDispatcher rd = request.getRequestDispatcher("comment1.jsp");
+            rd.forward(request, response);
+        }
+        else
+        {   
+            request.setAttribute("errorMsg", "no such post found");
+            RequestDispatcher rd = request.getRequestDispatcher("comment1.jsp");
+            rd.forward(request, response);
+        }
     }
 
     /**

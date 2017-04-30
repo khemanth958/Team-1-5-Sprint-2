@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import Data.GroupDB;
 import Data.UserDB;
 import Model.Users;
 import java.io.IOException;
@@ -11,8 +12,9 @@ import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import test.DbManager;
+import Model.Group;
 
 /**
  *
@@ -39,78 +42,39 @@ public class LoginValidation extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) 
+        {
             /* TODO output your page here. You may use following sample code. */
-        String role = null;
-        String user = request.getParameter("email");
-        String pass = request.getParameter("password");
-        boolean flag;
-        flag=false;
-        try{
-        DbManager db = new DbManager();
-        java.sql.Connection conn = db.getConnection();
-        if(conn == null)
-        {
-	System.out.println("Connection not established");
-        }else
-        {
-            System.out.println("Connection Established");
-            PreparedStatement pst = conn.prepareStatement("select r.role_name as role, u.u_emailid as email, u.u_password as password from users u, roles r, role_user_relationship rup\n" +
-"where r.role_id = rup.role_id and rup.u_id = u.u_id and u.u_emailid = ? and u.u_password = ?");
-            pst.setString(1, user);
-            pst.setString(2, pass);
-            ResultSet rs = pst.executeQuery();
-            while(rs.next()) {
-                role = rs.getString("role");
-                System.out.println("Correct login credentials");
-                flag=true;
-            } 
+            String role = null;
+            String email = request.getParameter("email");
+            String pass = request.getParameter("password");
+            boolean flag = false;
+            ArrayList<Group> listOfGroups = null;
+            Users newUser = UserDB.getUser(email, pass);
+            if (newUser != null) 
+            {
+                flag = true;
+            }
             
-        }
-        }catch (SQLException e) {
-            System.out.println(e);
-        }
-        if(flag==true)
-                {
-                    
-                    HttpSession session = request.getSession();
-                    session.setAttribute("email", user);
-                    session.setAttribute("password", pass);
-                    session.setAttribute("role", role);
-                    //RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
-                    //rd.forward(request, response);   
-                    
-                    Users user1 = new Users();
-                    //String userType = user.getUserType();
-                    if(role.equalsIgnoreCase("user")) 
-                    {
-			session.setAttribute("theUser", user);
-			//int participants = StudyDB.getParticipants(user.getEmail());
-			user1 = UserDB.getUser(user);
-                        session.setAttribute("user", user1);
-                        System.out.println(user1.getUserEmail());
-                        RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
-                         rd.forward(request, response);
-			
-                    } 
-                    else if (role.equalsIgnoreCase("Admin")) 
-                    {
-                        user1 = UserDB.getUser(user);
-                        session.setAttribute("user", user1);
-                        session.setAttribute("theUser", user);
-                        RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
-                        rd.forward(request, response);
-                    }
+            if (flag) 
+            {
+                listOfGroups = GroupDB.getGroupsOfUser(newUser.getRole(),newUser.getUserId());
+                HttpSession session = request.getSession();
+                session.setAttribute("user", newUser);
+                //session.setAttribute("role", newUser.getRole());
+                request.setAttribute("groups", listOfGroups);
+                RequestDispatcher rd = request.getRequestDispatcher("/admin.jsp");
+                rd.forward(request, response);
                 
-                
-                }
-        else{
-            System.out.println("Please enter correct credentials to login ");
-            request.setAttribute("msgForNotLogin", "Password or username does not match. Please re-enter.");
-            RequestDispatcher rd = request.getRequestDispatcher("/login.jsp");
-            rd.forward(request, response);
+            }
+            else
+            {
+                System.out.println("Please enter correct credentials to login ");
+                request.setAttribute("msgForNotLogin", "Password or username does not match. Please re-enter.");
+                RequestDispatcher rd = request.getRequestDispatcher("/login.jsp");
+                rd.forward(request, response);
+            }
         }
-    }
 }
     
     
@@ -141,11 +105,18 @@ public class LoginValidation extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(LoginValidation.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        Users currentUser = (Users)request.getSession().getAttribute("user");
+        System.out.println("The user_id is -----------------"+currentUser.getUserId()+", role is---------"+currentUser.getRole());
+        ArrayList<Group> listOfGroups = new ArrayList<Group>();
+        try 
+        {
+            listOfGroups = GroupDB.getGroupsOfUser(currentUser.getRole(),currentUser.getUserId());
+            request.setAttribute("groups", listOfGroups);
+            RequestDispatcher rd = request.getRequestDispatcher("/admin.jsp");
+            rd.forward(request, response);
+        } 
+        catch (ClassNotFoundException | SQLException ex) 
+        {
             Logger.getLogger(LoginValidation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

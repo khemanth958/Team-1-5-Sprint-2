@@ -4,6 +4,10 @@
     Author     : Akshay
 --%>
 
+<%@page import="Model.Posts"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="Model.Group"%>
+<%@page import="Model.Users"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.DriverManager" %>
 <%@ page import="java.sql.ResultSet" %>
@@ -18,80 +22,71 @@
 
 <nav id="menu">
      <ul><%-- Added the EL tag ${email} to display the users email instead of static name--%>
-            <li><a href="admin.jsp?user=Admin ${email}">Home</a></li>
-            <li><a href="NewPostsServlet?action=${groupName}&email1=${email}">Show My Posts</a></li>
-     </ul>    <%--On clicking the Reported Question link it will be directed  to the reportques.jsp--%>
+            <li><a href="LoginValidation">Home</a></li>
+            <li><a href="NewPostsServlet?action=${group.getGroupName()}&email1=${user.getUserEmail()}">Show My Posts</a></li>
+     </ul>    
 </nav>
 
 <section class="main">
     <%-- Img tag is used to import image --%>
-             <center><h1>${groupName}</h1></center>
+             <center><h1>${group.getGroupName()}</h1></center>
             <% 
-            String p = session.getAttribute("role").toString();
-            String group_name = request.getAttribute("groupName").toString();
-            String email_id = session.getAttribute("email").toString();
+            Users user = (Users)session.getAttribute("user");
+            Group group = (Group)request.getAttribute("group");
+            ArrayList<Posts> newArrayList = (ArrayList<Posts>)request.getAttribute("posts");
+            int u_id = user.getUserId();
+            String group_name = group.getGroupName();
+            String role = user.getRole();
+            String email_id = user.getUserEmail();
+            boolean isJoined = (Boolean)request.getAttribute("isJoined");
             try
             {
-                if (p.equals("admin")) 
+                if (role.equals("admin")) 
                 {
                 %>
-                <input type="hidden" value="Join" id="join_group_button" onClick="${groupName}">
+                <input type="hidden" value="Join" id="join_group_button" onClick="${group.getGroupName()}">
                 <br>
                 <section class="login_form">
                     <form action="NewPostsServlet" method="Post">
                     <%--<Label type="hidden"> What's on your mind</label>--%>
-                    <input type="hidden" value="${groupName}" name="group_name">
+                    <input type="hidden" value="${group.getGroupName()}" name="group_name">
                     </form>
                 </section>
                 <%
                 }
                 else
                 {
-                    DbManager db = new DbManager();
-                    java.sql.Connection conn = db.getConnection();
-                    if(conn == null)
+                    if (isJoined) 
                     {
-                        out.print("Connection not established");
-                    }else
-                    {
-                        //out.print("Connection Established");
-                        System.out.println("email Id is "+email_id);
-                        //String p = session.getAttribute("role").toString();
-                        int post_id = 0;
-                        String queryForCheckJoin="select gu.u_id from group_user_relationship gu, users u where gu.u_id = u.u_id and u.u_emailid = '"+email_id+"' and gu.g_id = (select g_id from groups where g_name = '"+group_name+"')";
-                        Statement stmtJoin = conn.createStatement();
-                        ResultSet rscheck=stmtJoin.executeQuery(queryForCheckJoin);
-                        if (rscheck.next()) 
-                        {
-                        %>
-                            <input type="hidden" value="Join" id="join_group_button" onClick="Join('${groupName}','${email}')">
-                            <br>
-                            <section class="login_form">
-                                <form action="NewPostsServlet" method="Post">
-                                <Label> What's on your mind</label>
-                                <input type="hidden" value="${groupName}" name="group_name">
-                                <input type="text" id="text1" name="input1" required />    
-                                <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
-                                </form>
-                            </section>
-                        <%
-                        }
-                        else
-                        {
-                        %>
-                        <input type="submit" value="Join" id="join_group_button" onClick="Join('${groupName}','${email}')">
+                    %>
+                        <input type="hidden" value="Join" id="join_group_button" onClick="Join('${group.getGroupName()}','${user.getUserEmail()}')">
                         <br>
-                            <section class="login_form" id = "post_section" style="visibility: hidden">
-                                <form action="NewPostsServlet" method="Post">
-                                <Label> What's on your mind</label>
-                                <input type="hidden" value="${groupName}" name="group_name">
-                                <input type="text" id="text1" name="input1" required />    
-                                <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
-                                </form>
-                            </section>
-                        <%
-                        }
+                        <section class="login_form">
+                            <form action="NewPostsServlet" method="Post">
+                            <Label> What's on your mind</label>
+                            <input type="hidden" value="${group.getGroupName()}" name="group_name">
+                            <input type="text" id="text1" name="input1" required />    
+                            <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
+                            </form>
+                        </section>
+                    <%
                     }
+                    else
+                    {
+                    %>
+                    <input type="submit" value="Join" id="join_group_button" onClick="Join('${group.getGroupName()}','${user.getUserEmail()}')">
+                    <br>
+                        <section class="login_form" id = "post_section" style="visibility: hidden">
+                            <form action="NewPostsServlet" method="Post">
+                            <Label> What's on your mind</label>
+                            <input type="hidden" value="${group.getGroupName()}" name="group_name">
+                            <input type="text" id="text1" name="input1" required />    
+                            <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
+                            </form>
+                        </section>
+                    <%
+                    }
+                    
                 }
             }
             catch(Exception e)
@@ -102,80 +97,59 @@
         
   <section class="main">
     <div id="main">
-        <table>
-        <%
-        
-        System.out.println("The group name is ---- "+group_name);
-        DbManager db = new DbManager();
-        java.sql.Connection conn = db.getConnection();
-        if(conn == null)
-        {
-            out.print("Connection not established");
-        }else
-        {
-            //out.print("Connection Established");
-            
-            System.out.println("email Id is "+email_id);
-            //String p = session.getAttribute("role").toString();
-            int post_id = 0;
-            String query1="select p.post as post_text, p.post_id as post_id,u.u_id as u_id, u.u_name as uname from posts p, users u, post_user_group_relationship pug, groups g where p.post_id = pug.p_id and pug.u_id = u.u_id and pug.g_id = g.g_id and g.g_name = '"+group_name+"'";
-            Statement stmtForPost=conn.createStatement();
-            Statement stmtForLikes=conn.createStatement();
-            Statement stmtForDelete = conn.createStatement();
-            ResultSet rs=stmtForPost.executeQuery(query1);
-            System.out.println(p);
-            int i = 0;
-        %>
-       
+        <table>    
         <th>Posts</th>
         <%
             try
             {
-                if(p.equals("admin"))
+                if(role.equals("admin"))
                 {    
-                    while(rs.next())
+                    //while(rs.next())
+                    for (int i = 0; i < newArrayList.size(); i++)
                     {
-                        i++;
+                        //i++;
                         %>
                             <tr>
-                            <td><%=rs.getString("uname") %></td>
-                            <td><%=rs.getString("post_text") %></td>
-                            <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Insert_or_Delete('<%=rs.getInt("post_id") %>','<%=p %>','<%=email_id %>','delete_<%=i%>')"/></td>
+                                <td><%=newArrayList.get(i).getuName() %></td>
+                                <td><%=newArrayList.get(i).getUserPosts()  %></td>
+                                <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Insert_or_Delete(<%=newArrayList.get(i).getPostId() %>,'<%=role %>','<%=email_id %>','delete_<%=i%>')"/></td>
                             </tr>
                         <%
                     }
                 }
                 else
                 {
-                    while(rs.next())
+                    System.out.println("The arraySize is-----------"+newArrayList.size());
+                    for (int i = 0; i < newArrayList.size(); i++)
                     {
-                        i++;
-                        post_id = rs.getInt("post_id");
-                        System.out.println("post id is " + post_id);
-                        String queryForDelete = "Select u_id from users where u_emailid = '"+email_id+"'";
-                        String query2 = "SELECT l.like_id as like_id from likes l, users u where u.u_id = l.u_id and u.u_emailid = '"+email_id+"' and l.post_id = "+post_id+"";
-                        ResultSet rs1=stmtForLikes.executeQuery(query2);
-                        ResultSet rs2 = stmtForDelete.executeQuery(queryForDelete);
-                        if (rs1.next())
+                        boolean check = false;
+                        System.out.println("The arraySize of likes is-----------"+newArrayList.get(i).getListOfLikes().size());
+                        for (int j = 0; j < newArrayList.get(i).getListOfLikes().size(); j++) 
                         {
-                        System.out.println("like_id is " + rs1.getString("like_id"));
+                            int user_id = newArrayList.get(i).getListOfLikes().get(j).getU_id();
+                            if (user_id == u_id) 
+                            {
+                                check = true;
+                                break;
+                            }
+                        }
+                        if (check)
+                        {
+                        //System.out.println("like_id is " + rs1.getString("like_id"));
                         %>
                             <tr>
-                            <td><%=rs.getString("uname") %></td>
-                            <td><%=rs.getString("post_text") %></td>
-                            <td><input type="button" id="like_<%=i%>" style="width:auto" value="Liked" ></td>
-                            <td><a href ="comment1.jsp?post_id=<%=post_id %>">Show Comments</a></td>
+                                <td><%=newArrayList.get(i).getuName()%></td>
+                                <td><%=newArrayList.get(i).getUserPosts() %></td>
+                                <td><input type="button" id="like_<%=i%>" style="width:auto" value="Liked" ></td>
+                                <td><a href ="CommentServlet?post_id=<%=newArrayList.get(i).getPostId() %>">Show Comments</a></td>
                             <%
-                                while(rs2.next())
+                                if (newArrayList.get(i).getuId() == u_id) 
                                 {
-                                    if (rs2.getInt("u_id") == rs.getInt("u_id")) 
-                                    {
-                                    %>
-                                        <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Delete_User_Post('<%=rs.getInt("post_id") %>','delete_<%=i%>')"/></td>
-                                    <%
-                                    }
+                                %>
+                                <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Delete_User_Post(<%=newArrayList.get(i).getPostId() %>,'delete_<%=i%>')"/></td>
+                                <%
                                 }
-                            %>
+                                %>
                             </tr>
                         <%
                         }
@@ -183,21 +157,18 @@
                         {
                         %>
                             <tr>
-                            <td><%=rs.getString("uname") %></td>
-                            <td><%=rs.getString("post_text") %></td>
-                            <td><input type="button" id="like_<%=i%>" value="Like" style="width:auto" onclick="Insert_or_Delete('<%=rs.getInt("post_id") %>','<%=p %>','<%=email_id %>','like_<%=i%>')"/></td>
-                            <td><a href = "comment1.jsp?post_id=<%=post_id %>">Show Comments</a></td>
+                                <td><%=newArrayList.get(i).getuName()%></td>
+                                <td><%=newArrayList.get(i).getUserPosts() %></td>
+                                <td><input type="button" id="like_<%=i%>" value="Like" style="width:auto" onclick="Insert_or_Delete(<%=newArrayList.get(i).getPostId() %>,'<%=role %>','<%=email_id %>','like_<%=i%>')"/></td>
+                                <td><a href = "CommentServlet?post_id=<%=newArrayList.get(i).getPostId() %>">Show Comments</a></td>
                             <%
-                                while(rs2.next())
+                                if (newArrayList.get(i).getuId() == u_id) 
                                 {
-                                    if (rs2.getInt("u_id") == rs.getInt("u_id")) 
-                                    {
-                                    %>
-                                        <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Delete_User_Post('<%=rs.getInt("post_id") %>','delete_<%=i%>')"/></td>
-                                    <%
-                                    }
+                                %>
+                                <td><input type="button" id="delete_<%=i%>" value="Delete" style="width:auto" onclick="Delete_User_Post(<%=newArrayList.get(i).getPostId() %>,'delete_<%=i%>')"/></td>
+                                <%
                                 }
-                            %>
+                                %>
                             </tr>
                         <%
                         }
@@ -207,9 +178,8 @@
             catch(Exception e)
             {
             e.printStackTrace();
-            }
-        }   
-                %>
+            }  
+            %>
                     </table>
                 </div>
             </section>
@@ -245,7 +215,7 @@
             }
         }
     
-    function Insert_or_Delete(post_id,role,user_id,button_id)
+    function Insert_or_Delete(post_id,role,user_id,button_id)//like or delete
     {
         if(document.getElementById(button_id).value == "Like" || document.getElementById(button_id).value == "Delete")
         {
@@ -257,9 +227,13 @@
                     if((xmlhttp.responseText) == "Liked")
                     {
                         document.getElementById(button_id).value = "Liked";
+                        alert("the post is liked");
                     }
                     else if((xmlhttp.responseText) == "Deleted")
+                    {
                         document.getElementById(button_id).value = "Deleted";
+                        alert("The post is deleted");
+                    }
                 }
             };
             
@@ -294,7 +268,7 @@
     
     function VisitPage(post_id)
     {
-        var x = location.href = "/comment.jsp?post_id=" + post_id;
+        var x = location.href = "/comment1.jsp?post_id=" + post_id;
     }
     
     function ShowText()

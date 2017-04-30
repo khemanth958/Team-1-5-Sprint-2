@@ -4,11 +4,14 @@
  * and open the template in the editor.
  */
 //import java.lang.String.split(String regex);
+import Data.LikeDB;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -74,12 +77,10 @@ public class InserOrDeleteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
     {
-        String post_id = request.getParameter("post_id");
-        String role = request.getParameter("role");
-        String user_id = request.getParameter("user_id");
+        String params = request.getParameter("post_id");
         //java.lang.String.split(String regex):
         
-        String[] sentences = post_id.split(";");
+        String[] sentences = params.split(";");
         System.out.println(sentences[0]);
         System.out.println(sentences[1]);
         System.out.println(sentences[2]);
@@ -87,44 +88,31 @@ public class InserOrDeleteServlet extends HttpServlet {
         System.out.println(roles[1]);
         String user_ids[] = sentences[2].split("=");
         System.out.println(user_ids[1]);
+        
         String user_role= roles[1];
         String email_id= user_ids[1];
+        int post_id = Integer.parseInt(sentences[0]);
         
         
-        
-        System.out.println(user_id);
-        System.out.println(role);
+        System.out.println(user_role);
+        System.out.println(sentences[0]);
         System.out.println(post_id);
         
         try
         {
-            DbManager db = new DbManager();
-            java.sql.Connection conn = db.getConnection();
-            if(conn == null)
+            int theCount = LikeDB.InsertORDeletePost(post_id, user_role, email_id);
+            if (theCount == 0) 
             {
-                System.out.println("Connection not established");
-            }else
+                response.getOutputStream().print("Deleted");
+            }
+            else if(theCount == 1)
             {
-                System.out.println("Connection Established");
-                CallableStatement  myproc = conn.prepareCall("call Insert_or_Delete(?,?,?,?)");
-                myproc.setString(1,user_role);
-                myproc.setString(2,email_id);
-                myproc.setString(3,sentences[0]);          
-                myproc.registerOutParameter(4,Types.INTEGER);
-                myproc.execute();
-                int theCount = myproc.getInt(4);
-                System.out.println(theCount);
-                if (theCount == 0) 
-                {
-                    response.getOutputStream().print("Deleted");
-                }
-                else if(theCount == 1)
-                {
-                    response.getOutputStream().print("Liked");
-                }
+                response.getOutputStream().print("Liked");
             }
         }catch (SQLException e) {
             System.out.println(e);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(InserOrDeleteServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

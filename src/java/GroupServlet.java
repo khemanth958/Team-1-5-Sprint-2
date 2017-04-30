@@ -5,7 +5,10 @@
  */
 
 import Data.GroupDB;
+import Data.PostDB;
 import Model.Group;
+import Model.Posts;
+import Model.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
@@ -113,24 +116,31 @@ public class GroupServlet extends HttpServlet {
             
         System.out.println("Reached Get Method");
             String action = request.getParameter("action");
-            
-            
-            Group group = new Group();
+            HttpSession session = request.getSession();
+            Users user = (Users)session.getAttribute("user");
+            int u_id = user.getUserId();
+            Group group = null;
             String groupName = request.getParameter("action");
-            
+            ArrayList<Posts> newListOfPost = new ArrayList<Posts>();
             System.out.println(groupName);
             try {
-                    List<Group> group2 = GroupDB.getGroup(groupName);;
-                    System.out.println(group2.get(0).getGroupID());
-                    request.setAttribute("groups", group2);
-                    request.setAttribute("groupName", groupName);
+                    group = GroupDB.getGroupAttributes(groupName);
+                    boolean isJoined = GroupDB.IsJoined(groupName, u_id);
+                    newListOfPost = PostDB.getAllPost(groupName);
+                    System.out.println(group.getGroupID());
+                    request.setAttribute("posts", newListOfPost);
+                    request.setAttribute("isJoined", isJoined);
+                    request.setAttribute("group", group);
+                    //request.setAttribute("groupName", groupName);
                     RequestDispatcher rd = request.getRequestDispatcher("DisplayGroup.jsp");
                     rd.forward(request, response);
-            } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(GroupServlet.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(GroupServlet.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            } catch (ClassNotFoundException ex) 
+            {
+                Logger.getLogger(GroupServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) 
+            {
+                Logger.getLogger(GroupServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
             
                 
@@ -202,22 +212,26 @@ public class GroupServlet extends HttpServlet {
             String groupName = request.getParameter("search_group");
             
             System.out.println(groupName);
-            if(groupName.isEmpty() || groupName.equalsIgnoreCase(" ")){
-               List<Group> group1 = GroupDB.getGroups();
-                request.setAttribute("groups", group1);
+            if(groupName.isEmpty() || groupName.equalsIgnoreCase(" "))
+            {
+                List<Group> group1 = GroupDB.getStringBasedGroups(groupName);
                 System.out.println("Group Name is empty");
-                for(int i =0;i<group1.size();i++){
-                   
+                
+                // for testing purpose
+                for(int i =0; i<group1.size(); i++)
+                {   
                     System.out.println(group1.get(i).getGroupID());
                 }
+                // testing purpose over
+                
+                request.setAttribute("groups", group1);
                 RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
                 rd.forward(request, response);
                 
-            }else if(!groupName.isEmpty()){
-            List<Group> group2 = GroupDB.getGroup(groupName);
-            //System.out.println(group.getGroupName());
-            //System.out.println(group.getGroupDescription());
-            
+            }
+            else if(!groupName.isEmpty())
+            {
+            List<Group> group2 = GroupDB.getStringBasedGroups(groupName);
             request.setAttribute("groups", group2);
             RequestDispatcher rd = request.getRequestDispatcher("groups_1.jsp");
             rd.forward(request, response);

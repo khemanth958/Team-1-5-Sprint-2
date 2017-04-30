@@ -10,6 +10,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.*;
+import test.DbManager;
 
 /**
  *
@@ -17,33 +19,35 @@ import java.sql.SQLException;
  */
 public class UserDB {
     
-    public static Users getUser(String email) throws ClassNotFoundException, SQLException {
-	        Class.forName("com.mysql.jdbc.Driver");
-		java.sql.Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ssdi_project", "root", "root");
-		
+    public static Users getUser(String email, String password) throws ClassNotFoundException, SQLException {
+	        
+                DbManager db = new DbManager();
+		Connection connection = db.getConnection();
+		Users user = null;
                 PreparedStatement ps = null;
 	        ResultSet rs = null;
 	        try {
-	            ps = connection.prepareStatement("SELECT * from Users WHERE u_emailid = ?");
+	            ps = connection.prepareStatement("SELECT u.u_Name as u_name, u.u_id as u_id, r.role_name as role_name from Users u, roles r, role_user_relationship ru WHERE u.u_id = ru.u_id and ru.role_id = r.role_id and u.u_emailid = ? and u.u_password = ?");
 	            ps.setString(1, email);
+                    ps.setString(2, password);
 	            rs = ps.executeQuery();
-	            while (rs.next()) {
-	            	Users user = new Users();
-	            	user.setUserEmail(rs.getString("u_emailid"));
-	            	user.setPassword(rs.getString("u_password"));
+	            while (rs.next()) 
+                    {
+                        user = new Users();
+	            	user.setUserEmail(email);
+	            	user.setPassword(password);
                         user.setUserName(rs.getString("u_name"));
 	            	user.setUserID(rs.getInt("u_id"));
-	               return user;
+                        user.setRole(rs.getString("role_name"));
 	            }
+                    
 	        } catch (SQLException e) {
 	            System.out.println(e);
 	            return null;
 	        } finally {
-                    rs.close();
-                    ps.close();
                     connection.close();
-	        }
-	        return null;
+                }
+                return user;
 	    }
     
     
