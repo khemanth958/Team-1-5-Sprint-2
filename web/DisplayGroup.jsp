@@ -10,7 +10,7 @@
 <%@ page import="java.sql.Statement" %>
 <%@ page import="java.sql.PreparedStatement" %> 
 <%@ page import="test.DbManager" %>
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 
 <%-- Include tag is used to import header page --%>

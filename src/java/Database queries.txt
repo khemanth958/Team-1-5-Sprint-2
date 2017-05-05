@@ -1,0 +1,61 @@
+CREATE TABLE `post_user_group_relationship` (
+  `post_id` int(11) NOT NULL,
+  `u_id` int(11) NOT NULL,
+  `g_id` int(11) NOT NULL,
+  PRIMARY KEY (`post_id`,`u_id`,`g_id`),
+  KEY `u_id` (`u_id`),
+  KEY `g_id` (`g_id`),
+  CONSTRAINT `post_user_group_relationship_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`),
+  CONSTRAINT `post_user_group_relationship_ibfk_2` FOREIGN KEY (`u_id`) REFERENCES `users` (`u_id`),
+  CONSTRAINT `post_user_group_relationship_ibfk_3` FOREIGN KEY (`g_id`) REFERENCES `groups` (`g_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+CREATE TABLE `post_user_relationship` (
+  `post_id` int(11) NOT NULL,
+  `u_id` int(11) NOT NULL,
+  PRIMARY KEY (`post_id`,`u_id`),
+  KEY `u_id` (`u_id`),
+  CONSTRAINT `post_user_relationship_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`),
+  CONSTRAINT `post_user_relationship_ibfk_2` FOREIGN KEY (`u_id`) REFERENCES `users` (`u_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+CREATE TABLE `group_user_relationshio` (
+  `g_id` int(11) NOT NULL,
+  `u_id` int(11) NOT NULL,
+  PRIMARY KEY (`g_id`,`u_id`),
+  KEY `u_id` (`u_id`),
+  CONSTRAINT `group_user_relationshio_ibfk_1` FOREIGN KEY (`g_id`) REFERENCES `groups` (`g_id`),
+  CONSTRAINT `group_user_relationshio_ibfk_2` FOREIGN KEY (`u_id`) REFERENCES `users` (`u_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE newusers (
+  userid int(11) NOT NULL AUTO_INCREMENT,
+  userName varchar(25), 
+  userEmailid varchar(60),
+  userPassword varchar(60),
+  roleId int(11),
+  PRIMARY KEY (userId)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8
+
+select users.u_Name,posts.post_id, posts.post from posts
+inner join post_user_group_relationship
+on posts.post_id = post_user_group_relationship.post_id inner join
+users on
+users.u_id = post_user_group_relationship.u_id;
+
+
+select * from posts inner join
+post_user_group_relationship on
+posts.post_id = post_user_group_relationship.post_id
+
+
+select * from posts inner join post_user_group_relationship on posts.post_id = post_user_group_relationship.post_id inner join groups on groups.g_id = post_user_group_relationship.g_id where groups.g_name ='Archives'
+
+update posts 
+set post ='I am at Uncc'
+where post='I am at Uncc_49ers CAB Event. Awesome!!!! Having Fun!!!!!'
+
+
+select p.post as post_text, p.post_id as post_id,u.u_id as u_id, u.u_name as uname from posts p, users u, post_user_group_relationship pug, groups g where p.post_id = pug.post_id and pug.u_id = u.u_id and pug.g_id = g.g_id and g.g_name = 'UNCC_49ers' and u.u_id = 1

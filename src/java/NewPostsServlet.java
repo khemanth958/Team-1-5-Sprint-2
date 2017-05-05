@@ -176,6 +176,7 @@ public class NewPostsServlet extends HttpServlet {
             Logger.getLogger(NewPostsServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *

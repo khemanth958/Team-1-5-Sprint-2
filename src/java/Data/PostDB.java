@@ -69,6 +69,7 @@ public class PostDB
         }*/
         return postsList;
     }
+
      
     public static ArrayList<Posts> getAllPost(String groupName) throws ClassNotFoundException, SQLException 
     {
