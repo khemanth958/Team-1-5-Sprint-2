@@ -1,0 +1,29 @@
+Create Database SSDI_PROJECT;
+
+use SSDI_PROJECT;
+
+CREATE TABLE `groups` (
+   `g_id` int(11) NOT NULL AUTO_INCREMENT,
+   `g_name` varchar(60) DEFAULT NULL,
+   `g_description` varchar(500) DEFAULT NULL,
+   PRIMARY KEY (`g_id`)
+ ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8
+ 
+ CREATE TABLE `user_group_relationship` (
+   `user_group_id` int(11) NOT NULL AUTO_INCREMENT,
+   `user_id` int(11) NOT NULL,
+   `group_id` int(11) NOT NULL,
+   PRIMARY KEY (`user_group_id`),
+   KEY `fk_user_group_users` (`user_id`),
+   KEY `fk_user_group_groups` (`group_id`),
+   CONSTRAINT `fk_user_group_groups` FOREIGN KEY (`group_id`) REFERENCES `groups` (`g_id`),
+   CONSTRAINT `fk_user_group_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`)
+ ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8
+ 
+CREATE TABLE `users` (
+   `u_id` int(11) NOT NULL AUTO_INCREMENT,
+   `u_emailid` varchar(60) DEFAULT NULL,
+   `u_password` varchar(60) DEFAULT NULL,
+   `u_Name` varchar(40) DEFAULT NULL,
+   PRIMARY KEY (`u_id`)
+ ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8
