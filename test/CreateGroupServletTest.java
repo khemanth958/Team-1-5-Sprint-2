@@ -4,11 +4,46 @@
  * and open the template in the editor.
  */
 
+import Data.CommentDB;
+import Data.GroupDB;
+import Model.Comment;
+import Model.Group;
+import Model.Posts;
+import Model.Users;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import test.DbManager;
+
+import Data.GroupDB;
+import Data.UserDB;
+import Model.Users;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import test.DbManager;
+import static org.mockito.Mockito.*;
+import javax.servlet.http.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 /**
  *
@@ -16,79 +51,109 @@ import test.DbManager;
  */
 public class CreateGroupServletTest {
     
+    Group group = mock(Group.class);
+    GroupDB groupDb = mock(GroupDB.class);
+    
+    
     public CreateGroupServletTest() {
     
     CreateGroupServlet Test = new CreateGroupServlet();
-    
-    
     }
-
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
 
     /**
      * Test of processRequest method, of class CreateGroupServlet.
      */
+    /*
     @Test
     public void testProcessRequest() throws Exception {
-        System.out.println("processRequest");
-        //HttpServletRequest request = null;
-        //HttpServletResponse response = null;
-        CreateGroupServlet instance = new CreateGroupServlet();
-        DbManager db = new DbManager();
-        java.sql.Connection conn = db.getConnection();
-        assertEquals(null,conn);   
-        //instance.processRequest(request, response);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        
+        HttpServletRequest request = mock(HttpServletRequest.class);       
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        RequestDispatcher rd = mock(RequestDispatcher.class);
+        HttpSession session = mock(HttpSession.class);
+        
+        Users newUser = mock(Users.class);
+        
+        CommentDB newCommentDB = mock(CommentDB.class);
+        
+        Comment newComment = mock(Comment.class);
+        
+        Group group = mock(Group.class);
+        GroupDB groupDb = mock(GroupDB.class);
+        
+        group.setGroupID(10);
+        group.setGroupName("testing");
+        group.setGroupDescription("asdasd");
+        group.setNumberOfGroupMembers(10);
+        //int groupMembers = group.getNumberOfGroupMembers();
+        when(request.getParameter("group_name")).thenReturn("testing");
+        when(request.getParameter("group_description")).thenReturn("asdasd");
+        when(request.getParameter("groupMembers")).thenReturn("10");
+        when(groupDb.createGroup(group.getGroupName(), group.getGroupDescription(),group.getNumberOfGroupMembers())).thenReturn(1);
+        when(request.getRequestDispatcher("GroupResult.jsp")).thenReturn(rd);
+        when(request.getRequestDispatcher("create_group.jsp")).thenReturn(rd);
+           
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        when(response.getWriter()).thenReturn(pw);
+         
+        new CreateGroupServlet().doPost(request, response);
+        
+        verify(rd).forward(request, response);
+            
+        String result = sw.getBuffer().toString().trim();
+        System.out.println("Result: "+result);
+                
+       assertEquals("Group Created", result);
+             
+    } */
+    
+    /**
+     * Test of processRequest method, of class CreateGroupServlet.
+     */
+    @Test
+    public void testProcessRequest1() throws Exception {
+        
+        HttpServletRequest request = mock(HttpServletRequest.class);       
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        RequestDispatcher rd = mock(RequestDispatcher.class);
+        HttpSession session = mock(HttpSession.class);
+        
+        Users newUser = mock(Users.class);
+        
+        CommentDB newCommentDB = mock(CommentDB.class);
+        
+        Comment newComment = mock(Comment.class);
+        
+        Group group = mock(Group.class);
+        GroupDB groupDb = mock(GroupDB.class);
+        
+        group.setGroupID(10);
+        group.setGroupName("testing");
+        group.setGroupDescription("asdasd");
+        group.setNumberOfGroupMembers(10);
+        //int groupMembers = group.getNumberOfGroupMembers();
+        when(request.getParameter("group_name")).thenReturn("testing");
+        when(request.getParameter("group_description")).thenReturn("asdasd");
+        when(request.getParameter("groupMembers")).thenReturn("10");
+        when(groupDb.createGroup(group.getGroupName(), group.getGroupDescription(),group.getNumberOfGroupMembers())).thenReturn(1);
+        when(request.getRequestDispatcher("GroupResult.jsp")).thenReturn(rd);
+        when(request.getRequestDispatcher("create_group.jsp")).thenReturn(rd);
+           
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        when(response.getWriter()).thenReturn(pw);
+         
+        new CreateGroupServlet().doPost(request, response);
+        
+        verify(rd).forward(request, response);
+            
+        String result = sw.getBuffer().toString().trim();
+        System.out.println("Result: "+result);
+                
+       assertEquals("Group Could not be created", result);
+             
     }
 
-    /**
-     * Test of doGet method, of class CreateGroupServlet.
-     
-    @Test
-    public void testDoGet() throws Exception {
-        System.out.println("doGet");
-        HttpServletRequest request = null;
-        HttpServletResponse response = null;
-        CreateGroupServlet instance = new CreateGroupServlet();
-        DbManager db = new DbManager();
-        java.sql.Connection conn = db.getConnection();
-        assertEquals(null,conn);
-        instance.doGet(request, response);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of doPost method, of class CreateGroupServlet.
-     
-    @Test
-    public void testDoPost() throws Exception {
-        System.out.println("doPost");
-        HttpServletRequest request = null;
-        HttpServletResponse response = null;
-        CreateGroupServlet instance = new CreateGroupServlet();
-        instance.doPost(request, response);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getServletInfo method, of class CreateGroupServlet.
-     
-    @Test
-    public void testGetServletInfo() {
-        System.out.println("getServletInfo");
-        CreateGroupServlet instance = new CreateGroupServlet();
-        String expResult = "";
-        String result = instance.getServletInfo();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-    */
+    
 }

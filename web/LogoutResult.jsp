@@ -12,3 +12,4 @@
         <P> Click <a href = "login.jsp">here</a> to go to login.</p>
     </body>
 </html>
+<%@include file="footer.jsp" %>

@@ -22,7 +22,7 @@ import test.DbManager;
 public class GroupDB 
 {
     private static final DbManager db = new DbManager();
-    private static final Connection connection = db.getConnection();
+    public static final Connection connection = db.getConnection();
     
     public static Group getGroupAttributes(String groupName) throws ClassNotFoundException, SQLException 
     {	        
@@ -159,6 +159,30 @@ public class GroupDB
         }*/
         return groupList;
     }
+    
+    public static  int createGroup(String groupName,String groupDescription,int groupMembers) throws ClassNotFoundException, SQLException {
+            //ConnectionPool pool = ConnectionPool.getInstance();
+            //Connection connection = pool.getConnection();
+            Class.forName("com.mysql.jdbc.Driver");
+        
+               // Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ssdi_project", "root", "root");
+
+            
+                PreparedStatement ps = null;
+            try {
+                PreparedStatement pst = connection.prepareStatement("insert into groups(g_name,g_description,g_group_members) values('"+ groupName + "','" + groupDescription + "','" + groupMembers + "')");
+                return pst.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e);
+                return 0;
+            } finally {
+                    //ps.close();
+                    //connection.close();
+                    return 1;
+//DbUtil.closePreparedStatement(ps);
+                //pool.freeConnection(connection);
+            }
+        }
     
     
 }

@@ -13,6 +13,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.*;
 import test.DbManager;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.*;
+import test.DbManager;
 
 /**
  *
@@ -20,17 +26,23 @@ import test.DbManager;
  */
 public class UserDB {
     
-    public static Users getUser(String email, String password) throws ClassNotFoundException, SQLException {
+    public Users getUser(String email, String password) throws ClassNotFoundException, SQLException {
 	        
                 DbManager db = new DbManager();
 		Connection connection = db.getConnection();
 		Users user = null;
+
+
+/**
+ *
+ * @author Hemanth
+ */
                 PreparedStatement ps = null;
 	        ResultSet rs = null;
 	        try {
 	            ps = connection.prepareStatement("SELECT u.u_Name as u_Name, u.u_id as u_id, r.role_name as role_name from users u, roles r, role_user_relationship ru WHERE u.u_id = ru.u_id and ru.role_id = r.role_id and u.u_emailid = ? and u.u_password = ?");
 	            ps.setString(1, email);
-                    ps.setString(2, PasswordUtil.hashPassword(password));
+                    ps.setString(2, password);
 	            rs = ps.executeQuery();
 	            while (rs.next()) 
                     {

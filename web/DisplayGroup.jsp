@@ -59,7 +59,7 @@
                         <br>
                         <section class="login_form">
                             <form action="NewPostsServlet" method="Post">
-                            <Label> What's on your mind</label>
+                            <Label> What's on your mind </label>
                             <input type="hidden" value="${group.getGroupName()}" name="group_name">
                             <input type="text" id="text1" name="input1" required />    
                             <input type="submit" value="Post" id="post_group_button" onClick="ShowText()">
@@ -137,7 +137,7 @@
                                 <td><%=newArrayList.get(i).getuName()%></td>
                                 <td><%=newArrayList.get(i).getUserPosts() %></td>
                                 <td><input type="button" id="like_<%=i%>" style="width:auto" value="Liked" ></td>
-                                <td><a href ="CommentServlet?post_id=<%=newArrayList.get(i).getPostId() %>">Show Comments</a></td>
+                                <td><a href ="CommentServlet?post_id=<%=newArrayList.get(i).getPostId() %>&group_name=<%=group.getGroupName() %>">Show Comments</a></td>
                             <%
                                 if (newArrayList.get(i).getuId() == u_id) 
                                 {
@@ -156,7 +156,7 @@
                                 <td><%=newArrayList.get(i).getuName()%></td>
                                 <td><%=newArrayList.get(i).getUserPosts() %></td>
                                 <td><input type="button" id="like_<%=i%>" value="Like" style="width:auto" onclick="Insert_or_Delete(<%=newArrayList.get(i).getPostId() %>,'<%=role %>','<%=email_id %>','like_<%=i%>')"/></td>
-                                <td><a href = "CommentServlet?post_id=<%=newArrayList.get(i).getPostId() %>">Show Comments</a></td>
+                                <td><a href = "CommentServlet?post_id=<%=newArrayList.get(i).getPostId() %>&group_name=<%=group.getGroupName() %>">Show Comments</a></td>
                             <%
                                 if (newArrayList.get(i).getuId() == u_id) 
                                 {

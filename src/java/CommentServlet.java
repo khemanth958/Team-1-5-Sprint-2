@@ -99,6 +99,8 @@ public class CommentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
     {
         System.out.println("Reached the CommentServlet Get Method");
+        
+        String group_name = request.getParameter("group_name");
         int post_Id = Integer.parseInt(request.getParameter("post_id"));
         Posts thePost = new Posts();
         ArrayList<Comment> commentList = new ArrayList<Comment>();;
@@ -119,6 +121,7 @@ public class CommentServlet extends HttpServlet {
         {
             request.setAttribute("thePost", thePost);
             request.setAttribute("commentList", commentList);
+            request.setAttribute("group_name", group_name);
             RequestDispatcher rd = request.getRequestDispatcher("comment1.jsp");
             rd.forward(request, response);
         }

@@ -4,12 +4,12 @@
 <%@page import="test.DbManager"%>
 <%@ include file="header.jsp" %>
 <%-- Code to display items in List --%>
-<body background= campus_loginw.jpg; no-repeat x center center fixed>
+<body background= 1ab2c91ae40e2fdb3a51f6d2fb69fb5c.jpg;>
 
 </body>
 <nav id="menu">
      <ul><%-- Added the EL tag ${email} to display the users email instead of static name--%>
-            <li><a href="admin.jsp?user=${user.getRole()} ${user.getUserEmail()}">Home</a></li>
+            <li><a href="LoginValidation">Home</a></li>
             <li><a href="create_group.jsp?user=${user.getRole()} ${user.getUserEmail()} ">Create Group</a></li>
      </ul>    <%--On clicking the Reported Question link it will be directed  to the reportques.jsp--%>
 </nav>
@@ -28,7 +28,7 @@
          <th>Group_ID</th>
         <th>Group Name</th>
         <th>Group Description</th>
-  <c:forEach var="groups" items="${sessionScope.groups}">
+  <c:forEach var="groups" items="${requestScope.groups}">
         <tr> 
             <td>${groups.groupID}</td>
             <td> <a href="GroupServlet?action=${groups.groupName}">${groups.groupName}</a></td>
@@ -67,3 +67,4 @@
         }
     </script>
  </section>
+    <%@include file="footer.jsp" %>

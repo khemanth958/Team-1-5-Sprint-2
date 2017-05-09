@@ -2,6 +2,7 @@
 <%-- Include tag is used to import header page --%>
 <%@ include file="header.jsp" %>
 
+<body background= Nightview.jpg;>
 <section id="home_page">
     <%-- Img tag is used to import image --%>
     <center><h1><b>Click &AMP; Connect</b></h1></center> 

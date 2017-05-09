@@ -43,7 +43,42 @@ public class GroupServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, ClassNotFoundException, SQLException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            
+        String groupName = request.getParameter("group_name");
+        String groupDescription = request.getParameter("group_description");
+        String groupMembers = request.getParameter("groupMembers");
+        int numberOfMembers = Integer.parseInt(groupMembers);
+        boolean flag;
+        flag=false;
+             
+            //System.out.println("Connection Established");
+            //PreparedStatement pst = conn.prepareStatement("insert into groups(g_name,g_description,g_group_members) values('"+ groupName + "','" + groupDescription + "','" + groupMembers + "')");
+            //pst.executeUpdate();
+            int result;
+            result = GroupDB.createGroup(groupName, groupDescription, numberOfMembers);
+                    if (result != 0) 
+                    {
+                        request.setAttribute("Result"," Group Created ");
+                        RequestDispatcher rd = request.getRequestDispatcher("GroupResult.jsp");
+                        rd.forward(request, response);  
+                    }
+                    else
+                    {
+                        request.setAttribute("Result", "Group Could not be created" + groupName);
+                        RequestDispatcher rd = request.getRequestDispatcher("create_group.jsp");
+                        rd.forward(request, response);
+                    }
+                  }    
+    }
+    
+    
+    /*protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
@@ -99,7 +134,7 @@ public class GroupServlet extends HttpServlet {
         }
         
         
-    }
+    }*/
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

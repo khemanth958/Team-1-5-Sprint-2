@@ -26,10 +26,10 @@ import Model.Group;
 
 /**
  *
- * @author Hemanth
+ * @author Akshay
  */
-public class LoginValidation extends HttpServlet {
-
+public class LoginValidation extends HttpServlet 
+{
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -40,59 +40,11 @@ public class LoginValidation extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) 
-        {
-            /* TODO output your page here. You may use following sample code. */
-            String role = null;
-            String email = request.getParameter("email");
-            String pass = request.getParameter("password");
-            System.out.println(email);
-            boolean flag = false;
-            ArrayList<Group> listOfGroups = null;
-            Users newUser = UserDB.getUser(email, pass);
-            if (newUser != null) 
-            {
-                flag = true;
-            }
-            System.out.println(flag);
-            if (flag) 
-            {
-                listOfGroups = GroupDB.getGroupsOfUser(newUser.getRole(),newUser.getUserId());
-                HttpSession session = request.getSession();
-                session.setAttribute("user", newUser);
-                //session.setAttribute("role", newUser.getRole());
-                session.setAttribute("groups", listOfGroups);
-                RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
-                rd.forward(request, response);
-                
-            }
-            else
-            {
-                System.out.println("Please enter correct credentials to login ");
-                request.setAttribute("msgForNotLogin", "Password or username does not match. Please re-enter.");
-                RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
-                rd.forward(request, response);
-            }
-        }
-}
-    
-    
-    
-    /*
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginValidation</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginValidation at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+            throws ServletException, IOException, ClassNotFoundException, SQLException 
+    {
+     doPost(request,response);   
     }
-*/
+
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -105,15 +57,17 @@ public class LoginValidation extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException 
+    {
         Users currentUser = (Users)request.getSession().getAttribute("user");
         System.out.println("The user_id is -----------------"+currentUser.getUserId()+", role is---------"+currentUser.getRole());
         ArrayList<Group> listOfGroups = new ArrayList<Group>();
         try 
         {
-            listOfGroups = GroupDB.getGroupsOfUser(currentUser.getRole(),currentUser.getUserId());
+            GroupDB newGroupDB = new GroupDB();
+            listOfGroups = newGroupDB.getGroupsOfUser(currentUser.getRole(),currentUser.getUserId());
             request.setAttribute("groups", listOfGroups);
-            RequestDispatcher rd = request.getRequestDispatcher("admin.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/admin.jsp");
             rd.forward(request, response);
         } 
         catch (ClassNotFoundException | SQLException ex) 
@@ -133,8 +87,49 @@ public class LoginValidation extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        try
+        {
+            /* TODO output your page here. You may use following sample code. */
+            
+            String email = request.getParameter("email");
+            String pass = request.getParameter("password");
+            boolean flag = false;
+            ArrayList<Group> listOfGroups = null;
+            UserDB newUserDB = new UserDB();
+            Users newUser = newUserDB.getUser(email, pass);
+            
+            if (newUser != null) 
+            {
+                flag = true;
+            }
+            
+            if (flag) 
+            {
+                GroupDB newGroupDB = new GroupDB();
+                listOfGroups = newGroupDB.getGroupsOfUser(newUser.getRole(),newUser.getUserId());
+                System.out.println(listOfGroups.get(1).getGroupName());
+                HttpSession session = request.getSession();
+                session.setAttribute("user", newUser);
+                //session.setAttribute("role", newUser.getRole());
+                request.setAttribute("groups", listOfGroups);
+                request.setAttribute("msgForNotLogin", "Login Successfull");
+                PrintWriter out = response.getWriter();
+                out.write("Login successfull...");
+                RequestDispatcher rd = request.getRequestDispatcher("/admin.jsp");
+                rd.forward(request, response);
+                
+            }
+            else
+            {
+                
+                System.out.println("Please enter correct credentials to login ");
+                request.setAttribute("msgForNotLogin", "Password or username does not match. Please re-enter.");
+                PrintWriter out = response.getWriter();
+                out.write("Login unsuccessful...");
+                RequestDispatcher rd = request.getRequestDispatcher("/login.jsp");
+                rd.forward(request, response);
+            }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(LoginValidation.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {

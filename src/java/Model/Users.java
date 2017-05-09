@@ -23,7 +23,7 @@ public class Users {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
-        this.password = PasswordUtil.hashPassword(password);
+        this.password = password;
         this.role = role;
     }
 
@@ -31,7 +31,7 @@ public class Users {
         
         this.userName = userName;
         this.userEmail = userEmail;
-        this.password = PasswordUtil.hashPassword(password);
+        this.password = password;
        
     }
     
@@ -92,7 +92,7 @@ public class Users {
      * @param password the password to set
      */
     public void setPassword(String password) {
-        this.password = PasswordUtil.hashPassword(password);
+        this.password = password;
     }
 
     /**

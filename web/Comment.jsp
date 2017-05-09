@@ -3,7 +3,7 @@
     Created on : Apr 23, 2017, 11:15:36 PM
     Author     : Akshay
 --%>
-
+<%@include file="header.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
@@ -54,3 +54,4 @@
     </form>
 </fieldset>
 </html>
+<%@include file="footer.jsp" %>

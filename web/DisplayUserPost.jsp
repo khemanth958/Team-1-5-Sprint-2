@@ -30,7 +30,7 @@
        
         <tr> 
             <td>${postsList.postId}</td>
-            <td> <a href="GroupServlet?action=${postsList.userPosts}">${postsList.userPosts}</a></td>
+            <td>${postsList.userPosts}</td>
             <td> <a href="UpdatePostServlet?showpost=${postsList.userPosts}&action=${groupName}">Update Post</a></td>  
         </tr>  
     </c:forEach>   
@@ -40,3 +40,4 @@
     </body>        
 
 </html>
+<%@include file="footer.jsp" %>
