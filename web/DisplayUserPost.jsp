@@ -14,7 +14,7 @@
 
 <nav id="menu">
      <ul><%-- Added the EL tag ${email} to display the users email instead of static name--%>
-            <li><a href="admin.jsp?user=Admin${email}">Home</a></li>
+            <li><a href="LoginValidation">Home</a></li>
             <li><a href="GroupServlet?action=${groupName}&email=${email}">Back</a></li>
      </ul>    <%--On clicking the Reported Question link it will be directed  to the reportques.jsp--%>
 </nav>

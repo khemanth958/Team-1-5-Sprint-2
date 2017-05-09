@@ -40,8 +40,10 @@
                 if (role.equals("admin")) 
                 {
                 %>
-                <input type="hidden" value="Join" id="join_group_button" onClick="${group.getGroupName()}">
-                <br>
+             
+             <input type="hidden" value="Join" id="join_group_button" onClick="${group.getGroupName()}">
+             
+             <br>
                 <section class="login_form">
                     <form action="NewPostsServlet" method="Post">
                     <%--<Label type="hidden"> What's on your mind</label>--%>
@@ -225,11 +227,11 @@
                         document.getElementById(button_id).value = "Liked";
                         alert("the post is liked");
                     }
-                    /*else if((xmlhttp.responseText) == "Deleted")
+                    else if((xmlhttp.responseText) == "Deleted")
                     {
                         document.getElementById(button_id).value = "Deleted";
                         alert("The post is deleted");
-                    }*/
+                    }
                 }
             };
             

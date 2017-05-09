@@ -63,11 +63,12 @@ public class Comment
         super();
     }
     
-    public Comment(int u_id, int post_id, String comment_text)
+    public Comment(int u_id, int post_id, String comment_text, String u_name)
     {
         this.u_id = u_id;
         this.post_id = post_id;
         this.comment_text = comment_text;
+        this.u_name = u_name;
     }
 
     /**
